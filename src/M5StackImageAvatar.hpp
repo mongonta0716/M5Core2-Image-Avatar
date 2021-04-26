@@ -38,7 +38,7 @@ class ImageAvatar {
                 _fixed_sp[i]->setColorDepth(p.cmn.colorDepth);
                 _fixed_sp[i]->setSwapBytes(p.cmn.swapBytes);
                 _fixed_sp[i]->createSprite(p.w, p.h);
-                _fixed_sp[i]->createPalette(colorpalette888, PALETTE_SIZE);
+//                _fixed_sp[i]->createPalette(colorpalette888, PALETTE_SIZE);
                 _fixed_sp[i]->drawBmpFile(SD, p.filename, 0, 0);
 //                _fixed_sp[i]->pushSprite(p.x, p.y, p.cmn.tpColor);
             }
@@ -48,14 +48,14 @@ class ImageAvatar {
             _mouth_sp->setColorDepth(pm.cmn.colorDepth);
             _mouth_sp->setSwapBytes(pm.cmn.swapBytes);
             _mouth_sp->createSprite(pm.w, pm.h);
-            _mouth_sp->createPalette(colorpalette888, PALETTE_SIZE);
+//            _mouth_sp->createPalette(colorpalette888, PALETTE_SIZE);
             _mouth_sp->drawBmpFile(SD, pm.filename_op, 0, 0);
 
             _mouth_cl_sp->setPsram(pm.cmn.psram);
             _mouth_cl_sp->setColorDepth(pm.cmn.colorDepth);
             _mouth_cl_sp->setSwapBytes(pm.cmn.swapBytes);
             _mouth_cl_sp->createSprite(pm.w, pm.h);
-            _mouth_cl_sp->createPalette(colorpalette888, PALETTE_SIZE);
+//            _mouth_cl_sp->createPalette(colorpalette888, PALETTE_SIZE);
             _mouth_cl_sp->drawBmpFile(SD, pm.filename_cl, 0, 0);
 
             params_fixed_s peb = eyeball[_expression];
@@ -63,7 +63,7 @@ class ImageAvatar {
             _eyeball_sp->setColorDepth(peb.cmn.colorDepth);
             _eyeball_sp->setSwapBytes(peb.cmn.swapBytes);
             _eyeball_sp->createSprite(peb.w, peb.h);
-            _eyeball_sp->createPalette(colorpalette888, PALETTE_SIZE);
+//            _eyeball_sp->createPalette(colorpalette888, PALETTE_SIZE);
             _eyeball_sp->drawBmpFile(SD, peb.filename, 0, 0);
 
             params_eye_s pe = eyes[_expression];
@@ -71,14 +71,14 @@ class ImageAvatar {
             _eyelid_sp->setColorDepth(pe.cmn.colorDepth);
             _eyelid_sp->setSwapBytes(pe.cmn.swapBytes);
             _eyelid_sp->createSprite(pe.w, pe.h);
-            _eyelid_sp->createPalette(colorpalette888, PALETTE_SIZE);
+//            _eyelid_sp->createPalette(colorpalette888, PALETTE_SIZE);
             _eyelid_sp->drawBmpFile(SD, pe.filename_op, 0, 0);
 
             _eyelid_cl_sp->setPsram(pe.cmn.psram);
             _eyelid_cl_sp->setColorDepth(pe.cmn.colorDepth);
             _eyelid_cl_sp->setSwapBytes(pe.cmn.swapBytes);
             _eyelid_cl_sp->createSprite(pe.w, pe.h);
-            _eyelid_cl_sp->createPalette(colorpalette888, PALETTE_SIZE);
+//            _eyelid_cl_sp->createPalette(colorpalette888, PALETTE_SIZE);
             _eyelid_cl_sp->drawBmpFile(SD, pe.filename_cl, 0, 0);
 
             params_eyebrow_s pebr = eyebrows[_expression];
@@ -86,7 +86,7 @@ class ImageAvatar {
             _eyebrow_sp->setColorDepth(pebr.cmn.colorDepth);
             _eyebrow_sp->setSwapBytes(pebr.cmn.swapBytes);
             _eyebrow_sp->createSprite(pebr.w, pebr.h);
-            _eyebrow_sp->createPalette(colorpalette888, PALETTE_SIZE);
+//            _eyebrow_sp->createPalette(colorpalette888, PALETTE_SIZE);
             _eyebrow_sp->drawBmpFile(SD, pebr.filename, 0, 0);
 
             // ----- Temp Sprites -----
@@ -94,19 +94,19 @@ class ImageAvatar {
             _eye_r_sp->setColorDepth(pe.cmn.colorDepth);
             _eye_r_sp->setSwapBytes(pe.cmn.swapBytes);
             _eye_r_sp->createSprite(pe.w, pe.h);
-            _eye_r_sp->createPalette(colorpalette888, PALETTE_SIZE);
+//            _eye_r_sp->createPalette(colorpalette888, PALETTE_SIZE);
 
             _eye_l_sp->setPsram(pe.cmn.psram);
             _eye_l_sp->setColorDepth(pe.cmn.colorDepth);
             _eye_l_sp->setSwapBytes(pe.cmn.swapBytes);
             _eye_l_sp->createSprite(pe.w, pe.h);
-            _eye_l_sp->createPalette(colorpalette888, PALETTE_SIZE);
+//            _eye_l_sp->createPalette(colorpalette888, PALETTE_SIZE);
 
             _lcd_sp->setPsram(spcommon.psram);
             _lcd_sp->setColorDepth(spcommon.colorDepth);
             _lcd_sp->setSwapBytes(spcommon.swapBytes);
             _lcd_sp->createSprite(_tft->width() - 2, _tft->height() - 2); // 傾けたときのマージン
-            _lcd_sp->createPalette(colorpalette888, PALETTE_SIZE);
+//            _lcd_sp->createPalette(colorpalette888, PALETTE_SIZE);
 
        }
 
@@ -211,12 +211,12 @@ class ImageAvatar {
                     , 0, 1.0, _mv.eye_r_ratio, pe.cmn.tpColor);
                 // まぶたが縮んで上下に空いた高さ
                 int rectH = (pe.h - (pe.h * _mv.eye_r_ratio)) / 2 + 3;
-                _eye_r_sp->fillRect(0, 0, pe.w, rectH, skinColor);
-                _eye_r_sp->fillRect(0, (pe.h - rectH), pe.w, skinColor);
+                //_eye_r_sp->fillRect(0, 0, pe.w, rectH, skinColor);
+                //  _eye_r_sp->fillRect(0, (pe.h - rectH), pe.w, skinColor);
             }
             _eye_r_sp->pushRotateZoom(_lcd_sp
                     , pe.rx, pe.ry + _mv.breath
-                    , 0, 1.0, 1.0, pe.cmn.tpColor);
+                    , 0, 1.0, 1.0, pe.cmn.tpColor2);
 
 
             // ---------- 左目の描画 --------------------------------------------------------------------
@@ -224,24 +224,24 @@ class ImageAvatar {
             if (_mv.eye_l_ratio < pe.minScaleY) {
                 _eyelid_cl_sp->pushRotateZoom(_eye_l_sp
                     , pe.w / 2, pe.h / 2
-                    , 0, -1.0, 1.0, pe.cmn.tpColor);
+                    , 0, 1.0, 1.0, pe.cmn.tpColor);
             } else {
-                _eye_l_sp->fillRect(0, (pe.ballcly - eyeball_h/2) - 3
-                        , pe.w, eyeball_h, whiteColor);
+                _eye_l_sp->fillRect(0, pe.h
+                        , pe.w, pe.h, whiteColor);
                 _eyeball_sp->pushSprite(_eye_l_sp
-                        , pe.ballclx / 2 + _mv.eyeballX
+                        , pe.ballclx / 2 - _mv.eyeballX
                         , pe.ballcly / 2 + _mv.eyeballY);
                 _eyelid_sp->pushRotateZoom(_eye_l_sp
                     , pe.w / 2, pe.h / 2
-                    , 0, -1.0, _mv.eye_l_ratio, pe.cmn.tpColor);
+                    , 0, 1.0, _mv.eye_l_ratio, pe.cmn.tpColor);
                 // まぶたが縮んで上下に空いた高さ
                 int rectH = (pe.h - (pe.h * _mv.eye_l_ratio)) / 2 + 3;
-                _eye_l_sp->fillRect(0, 0, pe.w, rectH, skinColor);
-                _eye_l_sp->fillRect(0, (pe.h - rectH), pe.w, skinColor);
+                //_eye_l_sp->fillRect(0, 0, pe.w, rectH, skinColor);
+                //_eye_l_sp->fillRect(0, (pe.h - rectH), pe.w, skinColor);
             }
             _eye_l_sp->pushRotateZoom(_lcd_sp
                     , pe.lx, pe.ly + _mv.breath
-                    , 0, 1.0, 1.0, pe.cmn.tpColor);
+                    , 0, -1.0, 1.0, pe.cmn.tpColor2);
 
 
 

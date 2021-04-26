@@ -25,28 +25,29 @@
 #define EYEBALL_MAX 10
 
 // WiFi Settings
-const char* ssid = "YOUR_SSID";
-const char* pass = "YOUR_PASSWORD";
+const char* ssid = "YOUR SSID";
+const char* pass = "YOUR PASS";
 
 // About:Color Value 
 // when use palette  =>  palette index
 // when dont use palette =>  color No. rgb888(0xXXXXXXU)
 
 // Avatar Color Settings
-static uint32_t skinColor  = 231; // 0xFF5B;    // Color of skin
-static uint32_t whiteColor = 0xFFFF; // 0xFFFF;    // Color of fill eyeball
-static uint32_t tpColor    = 149;  // 0x00FF00U; // Color of transparent
-
+static uint32_t skinColor  = 0xFF5B; // 0xFF5B;    // Color of skin
+static lgfx::rgb565_t whiteColor = lgfx::color565(255, 255, 255); // 0xFFFF;    // Color of fill eyeball
+static lgfx::rgb565_t tpColor    = lgfx::color565(0, 255, 0); // 0x00FF00U; // Color of transparent
+static lgfx::rgb565_t tpColor2   = lgfx::color565(0, 0, 255); // まぶたの外側の透明色
 // Sprite Common Settings
 typedef struct SpriteCommon {
   bool     psram;
   uint8_t  colorDepth;
   bool     swapBytes;
-  uint16_t tpColor;
+  lgfx::rgb565_t tpColor;
+  lgfx::rgb565_t tpColor2;
 } spcommon_s;
 
 // 149 is ColorIndex of transparent 0x07e0
-static spcommon_s spcommon = { true, 8, true, tpColor };
+static spcommon_s spcommon = { true, 16, true, tpColor, tpColor2 };
 
 
 // ---------- Body,Head,Eyeball Config ----------
@@ -63,15 +64,15 @@ typedef struct SpriteParams1phase {
 // 1 phase parts(head,body)
 static params_fixed_s fixedParts[FIXED_PARTS] = {
   //          x,   y,   w,   h, , bmpfilename
-  { spcommon, 0, -18, 320, 260, "/bmp/head.bmp" },
-  { spcommon, 0, 195, 320,  45, "/bmp/body.bmp"  },
+  { spcommon, 0, 0, 320, 240, "/bmp_saizou/head_24bit.bmp" },
+  { spcommon, 0, 204, 320, 36, "/bmp_saizou/body_24bit.bmp"  },
 };
 
 // eyeball
 static params_fixed_s eyeball[MAX_EXPRESSION] = {
-  { spcommon, 0,   0,  30,  38, "/bmp/eyeball.bmp"  },
-  { spcommon, 0,   0,  30,  38, "/bmp/eyeball.bmp"  },
-  { spcommon, 0,   0,  30,  38, "/bmp/eyeball.bmp"  },
+  { spcommon, 0,   0,  36,  36, "/bmp_saizou/eyeball_24bit.bmp"  },
+  { spcommon, 0,   0,  30,  38, "/bmp_saizou/eyeball_24bit.bmp"  },
+  { spcommon, 0,   0,  30,  38, "/bmp_saizou/eyeball_24bit.bmp"  },
 };
 
 // ---------- Mouth Config ----------
@@ -90,12 +91,12 @@ typedef struct SpriteParamsMouth {
 } params_mouth_s;
 
 static params_mouth_s mouth[MAX_EXPRESSION] = {
-    { spcommon, 158, 175, 50, 40, "/bmp/mouth_op_normal.bmp", 
-      "/bmp/mouth_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 158, 175, 60, 45, "/bmp/mouth_op_angry.bmp",
-      "/bmp/mouth_cl_angry.bmp",  1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 158, 175, 60, 45, "/bmp/mouth_op_angry.bmp",
-      "/bmp/mouth_cl_angry.bmp",  1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 160, 182, 112, 34, "/bmp_saizou/mouth_op_normal_24bit.bmp", 
+      "/bmp_saizou/mouth_cl_normal_24bit.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 158, 175, 60, 45, "/bmp_saizou/mouth_op_angry.bmp",
+      "/bmp_saizou/mouth_cl_angry.bmp",  1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 158, 175, 60, 45, "/bmp_saizou/mouth_op_angry.bmp",
+      "/bmp_saizou/mouth_cl_angry.bmp",  1.0, 1.0, 0.3, 1.0 },
 };
 
 // ---------- Eyes Config ----------
@@ -120,12 +121,12 @@ typedef struct SpriteParamsEyes {
 } params_eye_s;
 
 static params_eye_s eyes[MAX_EXPRESSION]= {
-    { spcommon, 113, 110, 208, 110, 63, 73, 35, 41, 30, 41, "/bmp/eye_r_op_normal.bmp",
-      "/bmp/eye_r_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 113, 110, 208, 110, 63, 73, 35, 41, 30, 41, "/bmp/eye_r_op_angry.bmp",
-      "/bmp/eye_r_cl_angry.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 113, 110, 208, 110, 63, 73, 35, 41, 30, 41, "/bmp/eye_r_op_angry.bmp",
-      "/bmp/eye_r_cl_angry.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 120, 114, 214, 114, 36, 72, 2, 36, 2, 36, "/bmp_saizou/eye_op_normal_24bit.bmp",
+      "/bmp_saizou/eye_cl_normal_24bit.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 113, 110, 208, 110, 63, 73, 35, 41, 30, 41, "/bmp_saizou/eye_r_op_angry_24bit.bmp",
+      "/bmp_saizou/eye_r_cl_angry_24bit.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 113, 110, 208, 110, 63, 73, 35, 41, 30, 41, "/bmp_saizou/eye_r_op_angry_24bit.bmp",
+      "/bmp_saizou/eye_r_cl_angry_24bit.bmp", 1.0, 1.0, 0.3, 1.0 },
 };
 
 // ---------- Eyebrows Config ----------
@@ -141,9 +142,9 @@ typedef struct SpriteParamsEyeBrows {
 } params_eyebrow_s;
 
 static params_eyebrow_s eyebrows[MAX_EXPRESSION]= {
-    { spcommon, 113,  55, 208,  55, 75, 24, "/bmp/eyebrow_normal.bmp" },
-    { spcommon, 113,  55, 208,  55, 75, 24, "/bmp/eyebrow_angry.bmp" },
-    { spcommon, 113,  55, 208,  55, 75, 24, "/bmp/eyebrow_angry.bmp"  }
+    { spcommon, 113,  55, 208,  55, 1, 1, "/bmp_saizou/eyebrow_normal_24bit.bmp" },
+    { spcommon, 113,  55, 208,  55, 1, 1, "/bmp_saizou/eyebrow_angry.bmp" },
+    { spcommon, 113,  55, 208,  55, 1, 1, "/bmp_saizou/eyebrow_angry.bmp"  }
 };
 
 // move Parameters
