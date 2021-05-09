@@ -190,10 +190,10 @@ class ImageAvatar {
 
 //            params_eye_s pe = eyes[_expression];
             uint16_t eyeball_h = eyeball[_expression].h;
-
+            // Serial.printf("r:%f, l:%f, min:%f\n", _mv.eye_r_ratio, _mv.eye_l_ratio, pe.minScaleY);
             // ---------- 右目の描画 --------------------------------------------------------------------
 //            Serial.printf("minY:%.2f\n", pe.minScaleY);
-            if (_mv.eye_r_ratio < pe.minScaleY) {
+            if (_mv.eye_r_ratio <= pe.minScaleY) {
 //                Serial.println("right close");
                 _eyelid_cl_sp->pushRotateZoom(_eye_r_sp
                     , pe.w / 2, pe.h / 2
@@ -221,7 +221,7 @@ class ImageAvatar {
 
             // ---------- 左目の描画 --------------------------------------------------------------------
             // 左目のまぶたは左右反転する。
-            if (_mv.eye_l_ratio < pe.minScaleY) {
+            if (_mv.eye_l_ratio <= pe.minScaleY) {
                 _eyelid_cl_sp->pushRotateZoom(_eye_l_sp
                     , pe.w / 2, pe.h / 2
                     , 0, 1.0, 1.0, pe.cmn.tpColor);

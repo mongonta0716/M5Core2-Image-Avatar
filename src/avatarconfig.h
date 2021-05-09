@@ -121,7 +121,7 @@ typedef struct SpriteParamsEyes {
 } params_eye_s;
 
 static params_eye_s eyes[MAX_EXPRESSION]= {
-    { spcommon, 120, 114, 214, 114, 36, 72, 2, 36, 2, 36, "/bmp_saizou/eye_op_normal_24bit.bmp",
+    { spcommon, 120, 114, 214, 114, 36, 120, 2, 82, 2, 82, "/bmp_saizou/eye_op_normal_24bit.bmp",
       "/bmp_saizou/eye_cl_normal_24bit.bmp", 1.0, 1.0, 0.3, 1.0 },
     { spcommon, 113, 110, 208, 110, 63, 73, 35, 41, 30, 41, "/bmp_saizou/eye_r_op_angry_24bit.bmp",
       "/bmp_saizou/eye_r_cl_angry_24bit.bmp", 1.0, 1.0, 0.3, 1.0 },
