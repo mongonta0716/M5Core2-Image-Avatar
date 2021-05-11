@@ -202,7 +202,7 @@ class ImageAvatar {
             } else {
 //                Serial.printf("right open:%.2f\n", _mv.eye_r_ratio);
                 _eye_r_sp->fillRect(0, (pe.ballcry - eyeball_h/2) - 3
-                    , pe.w, eyeball_h, whiteColor);
+                    , pe.w, eyeball_h, pe.cmn.tpColor2);
                 _eyeball_sp->pushSprite(_eye_r_sp
                         , pe.ballcrx / 2 + _mv.eyeballX
                         , pe.ballcry / 2 + _mv.eyeballY);
@@ -227,7 +227,7 @@ class ImageAvatar {
                     , 0, 1.0, 1.0, pe.cmn.tpColor);
             } else {
                 _eye_l_sp->fillRect(0, pe.h
-                        , pe.w, pe.h, whiteColor);
+                        , pe.w, pe.h, pe.cmn.tpColor2);
                 _eyeball_sp->pushSprite(_eye_l_sp
                         , pe.ballclx / 2 - _mv.eyeballX
                         , pe.ballcly / 2 + _mv.eyeballY);
