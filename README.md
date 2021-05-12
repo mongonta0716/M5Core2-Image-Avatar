@@ -1,8 +1,8 @@
 # M5Core2-Image-Avatar(beta version)
  M5Stack Image Avatar for M5Stack Core2
 
-![image](png/homura.png)
-![image](png/amabie.png)
+![image](jpg/homura.jpg)
+![image](jpg/saizou.jpg)
 
 日本語 | [English](README_en.md)
 
@@ -29,19 +29,26 @@ AquesTalkのインストールが難しい方はM5StackImageAvatar.inoの先頭�
 # 対応機種
 - M5Stack Core2
 
-## 環境についての注意事項
-320x240サイズの8bit Color(256Color)画像ファイルを利用するとメモリを多く消費します。M5Stack Fire以外の機種ではギリギリのため、メモリが足らなくなった場合は4bitColorに減色して利用してください。
+## その他の機種
+- M5Stack FireはPSRAMがあるので動く可能性があります。
+- それ以外のM5Stackシリーズはカラーパレットを共通にして8bitまたは4bitビットマップで表現すれば動作は可能ですが、パーツとデータの用意が非常に煩雑になるため今回は対応外とします。
 
 # 使い方
-SDカードのルートに「bmp」というフォルダを作成しdata/bmpフォルダのファイルを入れてください。
-M5StackImageAvatarのフォルダをスケッチフォルダにコピーしてビルドします。
+SDカードのルートに「data」フォルダ配下にあるフォルダをコピーしてください<br>
+使用したいアバターモデルのavatarconfig.hをsrcフォルダに上書きコピーしてビルドします。<br>
 
 - ボタンA：Avatarが動きます。
 - ボタンB：目玉が左右に動きます。
 - ボタンC：感情が変わります。
 
 ## Avatarモデル
-dataフォルダに[五積ほむら](data/bmp/)がありますので参考にしてください。
+下記の3種類あります。
+- [五積ほむら](data/bmp_homura/)
+
+- [五積あい](data/bmp_ai/)
+
+- [さいぞう](data/bmp_saizou/)<br>さいぞうは[robo8080](https://github.com/robo8080)さんのデザインをお借りして復元しました。
+
 
 # 画像の準備
 表情を豊かにするためにAvatarの部品を7つ用意する必要があります。
@@ -50,14 +57,13 @@ dataフォルダに[五積ほむら](data/bmp/)がありますので参考にし
 オリジナルのImageAvatarを作成するためには部品となるBMP画像ファイルが必要です。
 
 ## 画像作成で使用したツール
-- [コミPo!](https://www.comipo.com/)<br>五積ほむらの元データ作成で利用しました。
-- [Adobe Illustrator と Photoshop](https://www.adobe.com/)<br>画像の減色・変換及びパーツの切り抜き等で使用しました。アマビエの画像作成でも使用。
-- [GIMP](https://www.gimp.org/)<br>パレット情報の書き出しで利用しました。
+- [コミPo!](https://www.comipo.com/)<br>五積ほむら・五積あいの元データ作成で利用しました。
+- [GIMP](https://www.gimp.org/)<br>パーツの作成で使用しました。
 
 ### 透明色と肌色
-部品の重ね合わせを利用するために予め透明色と肌色、目玉の色を決めます。
+部品の重ね合わせを利用するために予め透明色１と透明色２を決めます。
 
-五積ほむらの場合、透明色（0x00FF00U）,肌色（0xFFE9DBU）,目玉の色（0xFFFFFFU)
+五積ほむらの場合、透明色１（緑：0x00FF00U）,透明色２（青：0x0000FFU）
 
 ### 回転のためのマージン
 萌え軸を利用する場合、Spriteのマージンが必要なので元画像は傾けても大丈夫な大きさで作成します。
@@ -72,22 +78,17 @@ dataフォルダに[五積ほむら](data/bmp/)がありますので参考にし
 1. 眉毛<br>右だけ用意します。
 
 - 状態が変化するパーツ（開閉ｘ感情の数だけ用意する）
-1. 開いたまぶた<br>右だけ用意します。（周りは肌色、まぶたの中は透明色）
-1. 閉じたまぶた<br>右だけ用意します。（周りは肌色）
-1. 開いた口<br>口の周りは肌色
-1. 閉じた口<br>口の周りは肌色
+1. 開いたまぶた<br>右だけ用意します。（周りは透明色２、まぶたの中は透明色１）
+1. 閉じたまぶた<br>右だけ用意します。（周りは透明色２）
+1. 開いた口<br>口の周りは透明色１
+1. 閉じた口<br>口の周りは透明色１
 
 まぶたと口は開いた状態と閉じた状態を同じ大きさで用意します。
 
 ### 感情を表現したい場合
 感情を表現したいときは固定パーツ（頭部、胴体部）を除くパーツを用意すればBMPファイルを入れ替えることによって切り替えが可能です。
 
-五積ほむらは普通・困った・怒った３つの状態をボタンCを押すことにより切り替え可能なので参考にしてください。
-
-## 画像ファイルのカラーパレット情報を統一する
-2020/4の時点では各画像のカラーパレットを共通にして埋め込む必要があります。ここが面倒だと思いますがGIMPやPhotoshopを利用することで共通のカラーパレット（カラープロファイル、カラーマップ）情報を埋め込む作業を行ってください。**基本となるカラーパレットは透明色、肌色を含んだ全色を使用した画像ファイルから作成する必要があります。**[colorpalette_homura.png](png/colorpalette_homura.png),[colorpalette_amabie.png](png/colorpalette_amabie.png)を参考にしてください。
-
-この仕様については、肌色のみ共通で大丈夫なように改善予定です。
+五積ほむらは普通・笑う・恥ずかしい・驚く・眠いの５つの状態をボタンCを押すことにより切り替え可能なので参考にしてください。
 
 
 # オプション機能
@@ -103,10 +104,8 @@ dataフォルダに[五積ほむら](data/bmp/)がありますので参考にし
 - USE_WIFI<br>現在は接続するだけで特に機能は実装していません。メモリを80K程度消費するのでOut Of Memoryに注意してください。4bitBMPでAvatarを作成するかM5Stack Fireを推奨します。
 
 ## 設定ファイル
-- [src/colorpalette.h](src/colopalette.h)<br>画像共通のカラーパレット情報を設定します。
+- [src/colorpalette.h](src/colopalette.h)<br>画像共通のカラーパレット情報を設定します。（16,24bitの場合は未使用）
 - [src/avatarconfig.h](src/avatarconfig.h)<br>Avatarのパラメータ、各画像ファイルの位置、大きさ、角度等を設定します。
-- [src/optionconfig.h](src/optionconfig.h)<br>WiFi設定・AquesTalkのセリフなどオプション設定。
-
 # 参考にしたリポジトリ
 - [m5stack-avatar](https://github.com/meganetaaan/m5stack-avatar)
 - [M5Stack_WebRadio_Avator](https://github.com/robo8080/M5Stack_WebRadio_Avator)
