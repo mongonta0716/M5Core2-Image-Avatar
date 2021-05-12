@@ -172,7 +172,9 @@ static const i2s_pin_config_t pin_config = {
 
 static void DAC_create()
 {
+#if defined(ARDUINO_M5STACK_FIRE) || defined(ARDUINO_M5Stack_Core_ESP32)
   dac_output_enable(DAC_CHANNEL_1);
+#endif
   i2s_driver_install((i2s_port_t)i2s_num, &i2s_config, 0, NULL);
 #if defined(ARDUINO_M5STACK_Core2) || defined(ARDUINO_M5Stack_ATOM)
      // M5StackCore2 or M5AtomEcho
