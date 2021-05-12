@@ -3,14 +3,15 @@
 
 #include <stdint.h>
 
-#define MAX_EXPRESSION 5
+#define MAX_EXPRESSION 1
 #define MAX_FILENAME 40
 
 #define NORMAL 0
-#define LAUGH  1
-#define SHY    2
-#define SURPRISE 3
-#define SLEEPY  4
+#define SAD    1
+#define ANGRY  2
+#define HAPPY  3
+#define DOUBT  4
+#define SLEEPY 5
 
 #define FIXED_PARTS 2
 
@@ -63,17 +64,13 @@ typedef struct SpriteParams1phase {
 // 1 phase parts(head,body)
 static params_fixed_s fixedParts[FIXED_PARTS] = {
   //          x,   y,   w,   h, , bmpfilename
-  { spcommon, -15, -30, 340, 280, "/bmp_avatar3/head.bmp" },
-  { spcommon, -15, 208, 340, 32, "/bmp_avatar3/body.bmp"  },
+  { spcommon, 0, 0, 320, 240, "/bmp_ai/head.bmp" },
+  { spcommon, 0, 208, 320, 32, "/bmp_ai/body.bmp"  },
 };
 
 // eyeball
 static params_fixed_s eyeball[MAX_EXPRESSION] = {
-  { spcommon, 0,   0,  52,  52, "/bmp_avatar3/eyeball.bmp"  },
-  { spcommon, 0,   0,  52,  52, "/bmp_avatar3/eyeball.bmp"  },
-  { spcommon, 0,   0,  52,  52, "/bmp_avatar3/eyeball.bmp"  },
-  { spcommon, 0,   0,  52,  52, "/bmp_avatar3/eyeball_surprise.bmp"  },
-  { spcommon, 0,   0,  52,  52, "/bmp_avatar3/eyeball.bmp"  },
+  { spcommon, 0,   0,  52,  52, "/bmp_ai/eyeball.bmp"  },
 };
 
 // ---------- Mouth Config ----------
@@ -92,16 +89,8 @@ typedef struct SpriteParamsMouth {
 } params_mouth_s;
 
 static params_mouth_s mouth[MAX_EXPRESSION] = {
-    { spcommon, 160, 190, 66, 34, "/bmp_avatar3/mouth_op_normal.bmp", 
-      "/bmp_avatar3/mouth_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 160, 190, 66, 34, "/bmp_avatar3/mouth_op_laugh.bmp", 
-      "/bmp_avatar3/mouth_cl_laugh.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 160, 190, 66, 34, "/bmp_avatar3/mouth_op_shy.bmp", 
-      "/bmp_avatar3/mouth_cl_shy.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 160, 190, 66, 34, "/bmp_avatar3/mouth_op_surprise.bmp", 
-      "/bmp_avatar3/mouth_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 160, 190, 66, 34, "/bmp_avatar3/mouth_cl_normal.bmp", 
-      "/bmp_avatar3/mouth_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 160, 195, 67, 30, "/bmp_ai/mouth_op_normal.bmp", 
+      "/bmp_ai/mouth_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
 };
 
 // ---------- Eyes Config ----------
@@ -126,16 +115,8 @@ typedef struct SpriteParamsEyes {
 } params_eye_s;
 
 static params_eye_s eyes[MAX_EXPRESSION]= {
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 130, 0, 130, "/bmp_avatar3/eye_op_normal.bmp",
-      "/bmp_avatar3/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 130, 0, 130, "/bmp_avatar3/eye_op_normal.bmp",
-      "/bmp_avatar3/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 130, 0, 130, "/bmp_avatar3/eye_op_normal.bmp",
-      "/bmp_avatar3/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 130, 0, 130, "/bmp_avatar3/eye_op_surprise.bmp",
-      "/bmp_avatar3/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 140, 0, 140, "/bmp_avatar3/eye_op_sleepy.bmp",
-      "/bmp_avatar3/eye_cl_sleepy.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 125, 140, 195, 140, 52, 174, 0, 115, 0, 115, "/bmp_ai/eye_op_normal.bmp",
+      "/bmp_ai/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
 };
 
 // ---------- Eyebrows Config ----------
@@ -151,11 +132,7 @@ typedef struct SpriteParamsEyeBrows {
 } params_eyebrow_s;
 
 static params_eyebrow_s eyebrows[MAX_EXPRESSION]= {
-    { spcommon, 120,  85, 200, 85, 66, 33, "/bmp_avatar3/eyebrow_normal.bmp" },
-    { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_avatar3/eyebrow_laugh.bmp" },
-    { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_avatar3/eyebrow_shy.bmp" },
-    { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_avatar3/eyebrow_surprise.bmp" },
-    { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_avatar3/eyebrow_shy.bmp" },
+    { spcommon, 125,  100, 195,  100, 58, 26, "/bmp_ai/eyebrow.bmp" },
 };
 
 // move Parameters
@@ -173,10 +150,6 @@ typedef struct moveParam {
     int breath;
 } move_param_s;
 static move_param_s move_init_param[MAX_EXPRESSION]= {
-  { 0,  0,  0.0,  0.0, 0.0, 0.0,  0.0,    0.0, 0 },
-  { 0,  0,  0.0,  0.0, 0.0, 0.0,  0.0,    0.0, 0 },
-  { 0,  0,  0.0,  0.0, 0.0, 0.0,  0.0,    0.0, 0 },
-  { 0,  0,  0.0,  0.0, 0.0, 0.0,  0.0,    0.0, 0 },
   { 0,  0,  0.0,  0.0, 0.0, 0.0,  0.0,    0.0, 0 },
 };
 
