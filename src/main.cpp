@@ -7,7 +7,7 @@
 
 
 // ----- for DEBUG -----
-#define DEBUG
+//#define DEBUG
 //#define TEST_MODE // テストモードの切り替え口の開閉を自動
 // ---------------------
 
@@ -72,7 +72,8 @@ uint32_t looptime = 0;
 // Start----- Avatar dynamic variables ----------
 static uint8_t expression = NORMAL;
 static bool    isTTS = false;
-static float   last_mouth_ratio = 0.0;
+static float   mouth_ratio = 0.0f;
+static float   last_mouth_ratio = 0.0f;
 static bool    eyeball_direction = RIGHT;
 static int     eyeballX = 0;
 static int     eyeballY = 0;
@@ -154,6 +155,7 @@ void printDebug(const char *str) {
 #endif
 }
 // Microphone
+#ifdef USE_MIC
 #ifdef ARDUINO_M5STACK_Core2
 bool InitI2SSpeakOrMic(int mode)
 {
@@ -207,12 +209,17 @@ float calcMouthRatio() {
       return mouth_ratio;
 }
 
-void initMIC() {
+#endif
+#endif
+void waitTTS() {
+  while (TTS.isPlay() == 1) {
+    vTaskDelay(10/portTICK_RATE_MS);
+  }
   #ifdef USE_MIC
     InitI2SSpeakOrMic(MODE_MIC);
   #endif
+  isTTS = false;
 }
-#endif
 
 
 
@@ -315,7 +322,7 @@ void lipsync(void *args) {
       float openratio = min(1.0f, last_mouth_ratio + f / 2.0f);
       last_mouth_ratio = f;
       avatar->setMouthOpen(openratio);      
-      vTaskDelay(50);
+      //vTaskDelay(50);
 #endif
     } else {
       // 通常時の口の動き
@@ -415,11 +422,12 @@ xMutex = xSemaphoreCreateMutex();
   tft.setSwapBytes(true);
   tft.fillScreen(0x000000U);
   delay(100);
-#ifdef USE_TTS
-  int iret = TTS.create(NULL);
-#endif
   avatar = new ImageAvatar(&tft, SINGING);
   startThreads();
+#ifdef USE_TTS
+  TTS.create(NULL);
+  //TTS.play("ohayougozaimasu", 20);
+#endif
 // #define TEST
 #ifdef TEST
   avatar->drawAll();
@@ -448,19 +456,16 @@ void loop() {
 #endif
     swing(20, 3);
     wink(LEFT, 2, 5);
-    isTTS = false;
-    initMIC();
+    waitTTS();
   }
   if(M5.BtnB.wasPressed()) {
 #ifdef USE_TTS
     isTTS = true;
     TTS.play("konnnichiwa.", 20);
     printFreeHeap();
+    waitTTS();
 #endif
     eyeballmove();
-    vTaskDelay(100);
-    isTTS = false;
-    initMIC();
   }
   if(M5.BtnC.wasPressed()) {
     // change expression

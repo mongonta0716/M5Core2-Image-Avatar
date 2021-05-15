@@ -37,7 +37,8 @@ class AquesTalkTTS {
 
 		int play(const char *koe, int speed);
 		void stop();
-	  int getLevel();
+	    int getLevel();
+		int isPlay();
 };
 extern AquesTalkTTS TTS;
 

@@ -21,6 +21,7 @@ static uint32_t *workbuf = 0;
 static TaskHandle_t taskAquesTalk=0;
 static SemaphoreHandle_t muxAquesTalk=0;
 static int level = 0;
+static int isPlayFlag = 1;
 
 
 static void task_TTS_synthe(void *arg);
@@ -106,9 +107,14 @@ void AquesTalkTTS::stop()
 	}
 }
 
+int AquesTalkTTS::isPlay() {
+  return isPlayFlag;
+}
+
 void task_TTS_synthe(void *arg)
 {
 	for(;;){
+    isPlayFlag = 1;
 	  DAC_create();
 	  DAC_start();
 		for(;;){
@@ -128,6 +134,7 @@ void task_TTS_synthe(void *arg)
     DAC_write_val(0);
 		DAC_stop();
 		DAC_release();
+    isPlayFlag = 0;
 		level = 0;
 		vTaskSuspend(NULL);	// suspend this task
 	}
@@ -172,6 +179,7 @@ static const i2s_pin_config_t pin_config = {
 
 static void DAC_create()
 {
+  i2s_driver_uninstall((i2s_port_t)i2s_num);
 #if defined(ARDUINO_M5STACK_FIRE) || defined(ARDUINO_M5Stack_Core_ESP32)
   dac_output_enable(DAC_CHANNEL_1);
 #endif
