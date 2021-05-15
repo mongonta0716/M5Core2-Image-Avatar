@@ -2,7 +2,9 @@
 #define _M5STACKIMAGEAVATAR_H_
 
 #include "avatarconfig.h"
-#include "colorpalette.h"
+#ifdef USE_PALETTE
+  #include "colorpalette.h"
+#endif
 
 class ImageAvatar {
     private:
@@ -38,8 +40,14 @@ class ImageAvatar {
                 _fixed_sp[i]->setColorDepth(p.cmn.colorDepth);
                 _fixed_sp[i]->setSwapBytes(p.cmn.swapBytes);
                 _fixed_sp[i]->createSprite(p.w, p.h);
-//                _fixed_sp[i]->createPalette(colorpalette888, PALETTE_SIZE);
+#ifdef USE_PALETTE
+                _fixed_sp[i]->createPalette(colorpalette888, PALETTE_SIZE);
+#endif
+#ifdef ARDUINO
                 _fixed_sp[i]->drawBmpFile(SD, p.filename, 0, 0);
+#else
+                _fixed_sp[i]->drawBmpFile(p.filename, 0, 0);
+#endif
 //                _fixed_sp[i]->pushSprite(p.x, p.y, p.cmn.tpColor);
             }
               
@@ -48,46 +56,60 @@ class ImageAvatar {
             _mouth_sp->setColorDepth(pm.cmn.colorDepth);
             _mouth_sp->setSwapBytes(pm.cmn.swapBytes);
             _mouth_sp->createSprite(pm.w, pm.h);
-//            _mouth_sp->createPalette(colorpalette888, PALETTE_SIZE);
-            _mouth_sp->drawBmpFile(SD, pm.filename_op, 0, 0);
 
             _mouth_cl_sp->setPsram(pm.cmn.psram);
             _mouth_cl_sp->setColorDepth(pm.cmn.colorDepth);
             _mouth_cl_sp->setSwapBytes(pm.cmn.swapBytes);
             _mouth_cl_sp->createSprite(pm.w, pm.h);
-//            _mouth_cl_sp->createPalette(colorpalette888, PALETTE_SIZE);
-            _mouth_cl_sp->drawBmpFile(SD, pm.filename_cl, 0, 0);
 
             params_fixed_s peb = eyeball[_expression];
             _eyeball_sp->setPsram(peb.cmn.psram);
             _eyeball_sp->setColorDepth(peb.cmn.colorDepth);
             _eyeball_sp->setSwapBytes(peb.cmn.swapBytes);
             _eyeball_sp->createSprite(peb.w, peb.h);
-//            _eyeball_sp->createPalette(colorpalette888, PALETTE_SIZE);
-            _eyeball_sp->drawBmpFile(SD, peb.filename, 0, 0);
 
             params_eye_s pe = eyes[_expression];
             _eyelid_sp->setPsram(pe.cmn.psram);
             _eyelid_sp->setColorDepth(pe.cmn.colorDepth);
             _eyelid_sp->setSwapBytes(pe.cmn.swapBytes);
             _eyelid_sp->createSprite(pe.w, pe.h);
-//            _eyelid_sp->createPalette(colorpalette888, PALETTE_SIZE);
-            _eyelid_sp->drawBmpFile(SD, pe.filename_op, 0, 0);
 
             _eyelid_cl_sp->setPsram(pe.cmn.psram);
             _eyelid_cl_sp->setColorDepth(pe.cmn.colorDepth);
             _eyelid_cl_sp->setSwapBytes(pe.cmn.swapBytes);
             _eyelid_cl_sp->createSprite(pe.w, pe.h);
-//            _eyelid_cl_sp->createPalette(colorpalette888, PALETTE_SIZE);
-            _eyelid_cl_sp->drawBmpFile(SD, pe.filename_cl, 0, 0);
 
             params_eyebrow_s pebr = eyebrows[_expression];
             _eyebrow_sp->setPsram(pebr.cmn.psram); 
             _eyebrow_sp->setColorDepth(pebr.cmn.colorDepth);
             _eyebrow_sp->setSwapBytes(pebr.cmn.swapBytes);
             _eyebrow_sp->createSprite(pebr.w, pebr.h);
-//            _eyebrow_sp->createPalette(colorpalette888, PALETTE_SIZE);
+
+
+#ifdef USE_PALETTE
+            _mouth_sp->createPalette(colorpalette888, PALETTE_SIZE);
+            _mouth_cl_sp->createPalette(colorpalette888, PALETTE_SIZE);
+            _eyeball_sp->createPalette(colorpalette888, PALETTE_SIZE);
+            _eyelid_sp->createPalette(colorpalette888, PALETTE_SIZE);
+            _eyelid_cl_sp->createPalette(colorpalette888, PALETTE_SIZE);
+            _eyebrow_sp->createPalette(colorpalette888, PALETTE_SIZE);
+#endif
+
+#ifdef ARDUINO
+            _mouth_sp->drawBmpFile(SD, pm.filename_op, 0, 0);
+            _mouth_cl_sp->drawBmpFile(SD, pm.filename_cl, 0, 0);
+            _eyeball_sp->drawBmpFile(SD, peb.filename, 0, 0);
+            _eyelid_sp->drawBmpFile(SD, pe.filename_op, 0, 0);
+            _eyelid_cl_sp->drawBmpFile(SD, pe.filename_cl, 0, 0);
             _eyebrow_sp->drawBmpFile(SD, pebr.filename, 0, 0);
+#else 
+            _mouth_sp->drawBmpFile(pm.filename_op, 0, 0);
+            _mouth_cl_sp->drawBmpFile(pm.filename_cl, 0, 0);
+            _eyeball_sp->drawBmpFile(peb.filename, 0, 0);
+            _eyelid_sp->drawBmpFile(pe.filename_op, 0, 0);
+            _eyelid_cl_sp->drawBmpFile(pe.filename_cl, 0, 0);
+            _eyebrow_sp->drawBmpFile(pebr.filename, 0, 0);
+#endif
 
             // ----- Temp Sprites -----
             _eye_r_sp->setPsram(pe.cmn.psram);

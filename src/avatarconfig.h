@@ -24,12 +24,15 @@
 #define EYEBALL_MAX 10
 
 // WiFi Settings
-const char* ssid = "YOUR SSID";
-const char* pass = "YOUR PASS";
+const char* wifi_ssid = "YOUR SSID";
+const char* wifi_pass = "YOUR PASS";
 
 // About:Color Value 
 // when use palette  =>  palette index
 // when dont use palette =>  color No. rgb888(0xXXXXXXU)
+// USE_PALETTE is defined when using 4bitBmp or 8bitBmp.
+// You need to embed the same palette information in each Bmp file.
+//#define USE_PALETTE
 
 // Avatar Color Settings
 static uint32_t skinColor  = 0xFF5B; // 0xFF5B;    // Color of skin
