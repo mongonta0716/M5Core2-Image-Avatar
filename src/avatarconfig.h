@@ -6,12 +6,12 @@
 #define MAX_EXPRESSION 6
 #define MAX_FILENAME 40
 
-#define NORMAL 0
-#define LAUGH  1
-#define SHY    2
+#define NORMAL   0
+#define LAUGH    1
+#define SHY      2
 #define SURPRISE 3
-#define SLEEPY  4
-#define SING 5
+#define SLEEPY   4
+#define SINGING  5
 
 #define FIXED_PARTS 2
 
@@ -107,7 +107,7 @@ static params_mouth_s mouth[MAX_EXPRESSION] = {
       "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
     { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_cl_normal.bmp", 
       "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_shy.bmp", 
+    { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_singing.bmp", 
       "/bmp_homura/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
 
 };

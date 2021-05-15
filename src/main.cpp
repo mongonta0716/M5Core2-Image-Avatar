@@ -1,14 +1,14 @@
 #include <Arduino.h>
 // ---------- Options -------------------------
 #define USE_TTS     // AquesTalkTTSを使用する場合はコメントを外す
-// #define USE_MIC     // need M5Go Bottom's MIC
+#define USE_MIC     // need M5Core2 or M5Stack Fire or M5Go Bottom's MIC
 #define USE_WIFI    // M5Stack Fire Only(Because Gray and Basic dont have enough memory.)
 // ---------- Options -------------------------
 
 
 // ----- for DEBUG -----
 #define DEBUG
-#define TEST_MODE // テストモードの切り替え口の開閉を自動
+//#define TEST_MODE // テストモードの切り替え口の開閉を自動
 // ---------------------
 
 #include <ESP32-Chimera-Core.h>
@@ -28,7 +28,9 @@
   #include "AquesTalkTTS.h"
   #include "driver/dac.h"
 #endif
-
+#ifdef USE_MIC
+  #include "driver/i2s.h"
+#endif
 
 #ifdef USE_WIFI
 #define BUFFER_LEN 250
@@ -53,6 +55,18 @@ uint32_t looptime = 0;
 
 #ifdef USE_MIC
 // マイクの機能は後で実装
+  #define CONFIG_I2S_BCK_PIN 12
+  #define CONFIG_I2S_LRCK_PIN 0
+  #define CONFIG_I2S_DATA_PIN 2
+  #define CONFIG_I2S_DATA_IN_PIN 34
+
+  #define Speak_I2S_NUMBER I2S_NUM_0 // AquesTalkで使うポートと同じ（スピーカーと併用できないため）
+
+  #define MODE_MIC 0
+  #define MODE_SPK 1
+  #define DATA_SIZE 128 
+
+  uint8_t microphonedata0[DATA_SIZE];
 #endif
 
 // Start----- Avatar dynamic variables ----------
@@ -119,9 +133,9 @@ void peerClients() {
       esp_ap.peer_addr[j] = (uint8_t)mac[i][j];
     }
     if (esp_now_add_peer(peer) != ESP_OK){
-      Serial.println("Failed to add peer");
+      // Serial.println("Failed to add peer");
     } else {
-      Serial.println("Success Peer");
+      // Serial.println("Success Peer");
     }
   }
 }
@@ -139,6 +153,69 @@ void printDebug(const char *str) {
 #endif
 #endif
 }
+// Microphone
+#ifdef ARDUINO_M5STACK_Core2
+bool InitI2SSpeakOrMic(int mode)
+{
+    esp_err_t err = ESP_OK;
+    i2s_driver_uninstall(Speak_I2S_NUMBER);
+    i2s_config_t i2s_config = {
+        .mode = (i2s_mode_t)(I2S_MODE_MASTER),
+        .sample_rate = 44100,
+        .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT, // is fixed at 12bit, stereo, MSB
+        .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
+        .communication_format = I2S_COMM_FORMAT_I2S,
+        .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
+        .dma_buf_count = 2,
+        .dma_buf_len = 128,
+    };
+    if (mode == MODE_MIC)
+    {
+        i2s_config.mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_PDM);
+    }
+    else
+    {
+        i2s_config.mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX);
+        i2s_config.use_apll = false;
+        i2s_config.tx_desc_auto_clear = true;
+    }
+    err += i2s_driver_install(Speak_I2S_NUMBER, &i2s_config, 0, NULL);
+    i2s_pin_config_t tx_pin_config;
+    tx_pin_config.bck_io_num = CONFIG_I2S_BCK_PIN;
+    tx_pin_config.ws_io_num = CONFIG_I2S_LRCK_PIN;
+    tx_pin_config.data_out_num = CONFIG_I2S_DATA_PIN;
+    tx_pin_config.data_in_num = CONFIG_I2S_DATA_IN_PIN;
+    err += i2s_set_pin(Speak_I2S_NUMBER, &tx_pin_config);
+    err += i2s_set_clk(Speak_I2S_NUMBER, 44100, I2S_BITS_PER_SAMPLE_16BIT, I2S_CHANNEL_MONO);
+    return true;
+}
+float calcMouthRatio() {
+      size_t byte_read;
+      i2s_read(Speak_I2S_NUMBER, (char *)microphonedata0, DATA_SIZE, &byte_read, (100 / portTICK_RATE_MS));
+      int16_t mic_level = (*(int16_t *)microphonedata0);
+      char message[20] = "";
+      sprintf(message, "mic_level:%d\n", mic_level);
+      printDebug(message);
+      float mouth_ratio = 0.0f;
+      if (abs(mic_level) > 300) {
+        mouth_ratio = 1.0f;
+      } else if (abs(mic_level) < 50) {
+        mouth_ratio = 0.0f;
+      } else {
+        mouth_ratio = (float)(abs(mic_level) / 300.0f);
+      }
+      return mouth_ratio;
+}
+
+void initMIC() {
+  #ifdef USE_MIC
+    InitI2SSpeakOrMic(MODE_MIC);
+  #endif
+}
+#endif
+
+
+
 // Start----- Avatar Actions ----------
 void swing(int count, int angle) {
     int c = 0;
@@ -244,7 +321,11 @@ void lipsync(void *args) {
       // 通常時の口の動き
 
 #ifdef USE_MIC
-// マイク使用時の口の動き（未実装）
+      // マイク使用時の口の動き（未実装）
+
+      float f = calcMouthRatio();
+      avatar->setMouthOpen(f);
+      vTaskDelay(33);
 #endif
 #ifdef TEST_MODE
       for(float f=0.0; f<=1.0; f=f+0.1) {
@@ -307,6 +388,9 @@ void setup() {
   M5.begin();
 #ifdef ARDUINO_M5STACK_Core2
   M5.Axp.SetSpkEnable(true);
+  #ifdef USE_MIC
+    InitI2SSpeakOrMic(MODE_MIC); // I2Sは通常時はマイク（AquesTalk内でTTSを使うときにSPKになる。）
+  #endif
 #endif
   SD.begin(4, SPI, 20000000);
 
@@ -334,7 +418,7 @@ xMutex = xSemaphoreCreateMutex();
 #ifdef USE_TTS
   int iret = TTS.create(NULL);
 #endif
-  avatar = new ImageAvatar(&tft, NORMAL);
+  avatar = new ImageAvatar(&tft, SINGING);
   startThreads();
 // #define TEST
 #ifdef TEST
@@ -365,6 +449,7 @@ void loop() {
     swing(20, 3);
     wink(LEFT, 2, 5);
     isTTS = false;
+    initMIC();
   }
   if(M5.BtnB.wasPressed()) {
 #ifdef USE_TTS
@@ -375,6 +460,7 @@ void loop() {
     eyeballmove();
     vTaskDelay(100);
     isTTS = false;
+    initMIC();
   }
   if(M5.BtnC.wasPressed()) {
     // change expression
