@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define MAX_EXPRESSION 5
+#define MAX_EXPRESSION 6
 #define MAX_FILENAME 40
 
 #define NORMAL 0
@@ -11,6 +11,7 @@
 #define SHY    2
 #define SURPRISE 3
 #define SLEEPY  4
+#define SING 5
 
 #define FIXED_PARTS 2
 
@@ -24,8 +25,8 @@
 #define EYEBALL_MAX 10
 
 // WiFi Settings
-const char* wifi_ssid = "YOUR SSID";
-const char* wifi_pass = "YOUR PASS";
+const char* avatar_wifi_ssid = "YOUR SSID";
+const char* avatar_wifi_pass = "YOUR PASS";
 
 // About:Color Value 
 // when use palette  =>  palette index
@@ -77,6 +78,7 @@ static params_fixed_s eyeball[MAX_EXPRESSION] = {
   { spcommon, 0,   0,  52,  52, "/bmp_homura/eyeball.bmp"  },
   { spcommon, 0,   0,  52,  52, "/bmp_homura/eyeball_surprise.bmp"  },
   { spcommon, 0,   0,  52,  52, "/bmp_homura/eyeball.bmp"  },
+  { spcommon, 0,   0,  52,  52, "/bmp_homura/eyeball.bmp"  },
 };
 
 // ---------- Mouth Config ----------
@@ -96,15 +98,18 @@ typedef struct SpriteParamsMouth {
 
 static params_mouth_s mouth[MAX_EXPRESSION] = {
     { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_normal.bmp", 
-      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
     { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_laugh.bmp", 
-      "/bmp_homura/mouth_cl_laugh.bmp", 1.0, 1.0, 0.3, 1.0 },
+      "/bmp_homura/mouth_cl_laugh.bmp", 1.0, 1.0, 0.2, 1.0 },
     { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_shy.bmp", 
-      "/bmp_homura/mouth_cl_shy.bmp", 1.0, 1.0, 0.3, 1.0 },
+      "/bmp_homura/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
     { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_surprise.bmp", 
-      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
     { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_cl_normal.bmp", 
-      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_shy.bmp", 
+      "/bmp_homura/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
+
 };
 
 // ---------- Eyes Config ----------
@@ -139,6 +144,8 @@ static params_eye_s eyes[MAX_EXPRESSION]= {
       "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
     { spcommon, 120, 130, 200, 130, 56, 200, 0, 140, 0, 140, "/bmp_homura/eye_op_sleepy.bmp",
       "/bmp_homura/eye_cl_sleepy.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 120, 130, 200, 130, 56, 200, 0, 130, 0, 130, "/bmp_homura/eye_op_surprise.bmp",
+      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
 };
 
 // ---------- Eyebrows Config ----------
@@ -159,6 +166,7 @@ static params_eyebrow_s eyebrows[MAX_EXPRESSION]= {
     { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_homura/eyebrow_shy.bmp" },
     { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_homura/eyebrow_surprise.bmp" },
     { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_homura/eyebrow_shy.bmp" },
+    { spcommon, 120,  85, 200, 85, 66, 33, "/bmp_homura/eyebrow_normal.bmp" },
 };
 
 // move Parameters
@@ -176,11 +184,12 @@ typedef struct moveParam {
     int breath;
 } move_param_s;
 static move_param_s move_init_param[MAX_EXPRESSION]= {
-  { 0,  0,  0.0,  0.0, 0.0, 0.0,  0.0,    0.0, 0 },
-  { 0,  0,  0.0,  0.0, 0.0, 0.0,  0.0,    0.0, 0 },
-  { 0,  0,  0.0,  0.0, 0.0, 0.0,  0.0,    0.0, 0 },
   { 0,  0,  1.0,  1.0, 0.0, 0.0,  0.0,    0.0, 0 },
-  { 0,  0,  0.0,  0.0, 0.0, 0.0,  0.0,    0.0, 0 },
+  { 0,  0,  1.0,  1.0, 0.0, 0.0,  0.0,    0.0, 0 },
+  { 0,  0,  1.0,  1.0, 0.0, 0.0,  0.0,    0.0, 0 },
+  { 0,  0,  1.0,  1.0, 0.0, 0.0,  0.0,    0.0, 0 },
+  { 0,  0,  1.0,  1.0, 0.0, 0.0,  0.0,    0.0, 0 },
+  { 0,  0,  1.0,  1.0, 0.0, 0.0,  0.0,    0.0, 0 },
 };
 
 #endif
