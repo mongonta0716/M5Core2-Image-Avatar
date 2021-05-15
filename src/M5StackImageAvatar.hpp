@@ -1,6 +1,9 @@
 #ifndef _M5STACKIMAGEAVATAR_H_
 #define _M5STACKIMAGEAVATAR_H_
 
+#ifndef ARDUINO
+  #include <LovyanGFX.hpp>
+#endif
 #include "avatarconfig.h"
 #ifdef USE_PALETTE
   #include "colorpalette.h"
@@ -168,16 +171,6 @@ class ImageAvatar {
         ~ImageAvatar();
 
         void drawTest() {
-            _tft->setCursor(160, 120);
-            _tft->println("AvatarDraw");
-            _tft->fillRect(180, 180, 20, 20, 0xFF0000);
-            _mouth_sp->fillRect(0, 0, 20, 20, 100);
-            _mouth_sp->drawBmpFile(SD, mouth[_expression].filename_op, 0, 0);
-            _mouth_sp->drawRect(0, 0, 10, 10, 139);
-            _lcd_sp->fillSprite(139);
-            _mouth_sp->pushSprite(_lcd_sp, 100, 100);
-            _eyelid_cl_sp->pushSprite(_lcd_sp, 0, 0);
-            _lcd_sp->pushSprite(0, 0);
         }
         void drawAll() {
             // 一時的なSpriteの確保
@@ -297,6 +290,7 @@ class ImageAvatar {
             _expression = expression;
             _mv = move_init_param[_expression];
             init(true);
+            drawAll();
         }
         void setBreath(float f) {
             _mv.breath = f;
