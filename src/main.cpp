@@ -212,7 +212,7 @@ float calcMouthRatio() {
 #endif
 #endif
 void waitTTS() {
-  while (TTS.isPlay() == 1) {
+  while (TTS.isPlay()) {
     vTaskDelay(10/portTICK_RATE_MS);
   }
   #ifdef USE_MIC

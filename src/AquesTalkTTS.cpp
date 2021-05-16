@@ -21,7 +21,6 @@ static uint32_t *workbuf = 0;
 static TaskHandle_t taskAquesTalk=0;
 static SemaphoreHandle_t muxAquesTalk=0;
 static int level = 0;
-static int isPlayFlag = 1;
 
 
 static void task_TTS_synthe(void *arg);
@@ -107,14 +106,16 @@ void AquesTalkTTS::stop()
 	}
 }
 
-int AquesTalkTTS::isPlay() {
-  return isPlayFlag;
+bool AquesTalkTTS::isPlay()
+{
+	if(taskAquesTalk==0) return false;	// not playing
+	if(eTaskGetState(taskAquesTalk)==eSuspended) return false;	// already suspended.
+	return true;
 }
 
 void task_TTS_synthe(void *arg)
 {
 	for(;;){
-    isPlayFlag = 1;
 	  DAC_create();
 	  DAC_start();
 		for(;;){
@@ -134,7 +135,6 @@ void task_TTS_synthe(void *arg)
     DAC_write_val(0);
 		DAC_stop();
 		DAC_release();
-    isPlayFlag = 0;
 		level = 0;
 		vTaskSuspend(NULL);	// suspend this task
 	}
