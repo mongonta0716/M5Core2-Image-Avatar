@@ -10,7 +10,7 @@
 
 #define LEN_FRAME 32
 #define	TASK_PRIORITY		10
-#define	SAMPLING_FREQ   24000	// 8KHz x 3
+#define	SAMPLING_FREQ   16000	// 8KHz x 2
 #define	DMA_BUF_COUNT 3
 #define	DMA_BUF_LEN	(LEN_FRAME*3)	// one buffer size(one channnel samples)
 #define DMA_BUF_SIZE (DMA_BUF_COUNT*DMA_BUF_LEN)
@@ -252,5 +252,6 @@ static int DAC_write_val(uint16_t val)
 {
 	uint16_t sample[2];
   sample[0]=sample[1]=val; // mono -> stereo
-  return i2s_push_sample((i2s_port_t)i2s_num, (const char *)sample, TICKS_TO_WAIT);
+  size_t byte_written;
+  return i2s_write((i2s_port_t)i2s_num, (const char *)sample, sizeof(sample), &byte_written, TICKS_TO_WAIT);
 }
