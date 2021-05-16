@@ -10,7 +10,11 @@
 
 #define LEN_FRAME 32
 #define	TASK_PRIORITY		10
+<<<<<<< HEAD
 #define	SAMPLING_FREQ   16000	// 8KHz x 2 <- i2s_push_sampleをi2s_writeに変えたあとに調整
+=======
+#define	SAMPLING_FREQ   16000	// 8KHz x 2
+>>>>>>> test2
 #define	DMA_BUF_COUNT 3
 #define	DMA_BUF_LEN	(LEN_FRAME*3)	// one buffer size(one channnel samples)
 #define DMA_BUF_SIZE (DMA_BUF_COUNT*DMA_BUF_LEN)
