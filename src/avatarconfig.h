@@ -6,12 +6,12 @@
 #define MAX_EXPRESSION 6
 #define MAX_FILENAME 40
 
-#define NORMAL   0
-#define LAUGH    1
-#define SHY      2
+#define NORMAL 0
+#define LAUGH  1
+#define SHY    2
 #define SURPRISE 3
-#define SLEEPY   4
-#define SINGING  5
+#define SLEEPY  4
+#define SINGING 5
 
 #define FIXED_PARTS 2
 
@@ -25,15 +25,12 @@
 #define EYEBALL_MAX 10
 
 // WiFi Settings
-const char* avatar_wifi_ssid = "YOUR SSID";
-const char* avatar_wifi_pass = "YOUR PASS";
+// const char* ssid = "YOUR SSID";
+// const char* pass = "YOUR PASS";
 
 // About:Color Value 
 // when use palette  =>  palette index
 // when dont use palette =>  color No. rgb888(0xXXXXXXU)
-// USE_PALETTE is defined when using 4bitBmp or 8bitBmp.
-// You need to embed the same palette information in each Bmp file.
-//#define USE_PALETTE
 
 // Avatar Color Settings
 static uint32_t skinColor  = 0xFF5B; // 0xFF5B;    // Color of skin
@@ -67,18 +64,18 @@ typedef struct SpriteParams1phase {
 // 1 phase parts(head,body)
 static params_fixed_s fixedParts[FIXED_PARTS] = {
   //          x,   y,   w,   h, , bmpfilename
-  { spcommon, -15, -30, 340, 280, "/bmp_homura/head.bmp" },
-  { spcommon, -15, 208, 340, 32, "/bmp_homura/body.bmp"  },
+  { spcommon, 0, 0, 320, 240, "/bmp_ai/head.bmp" },
+  { spcommon, 0, 208, 320, 32, "/bmp_ai/body.bmp"  },
 };
 
 // eyeball
 static params_fixed_s eyeball[MAX_EXPRESSION] = {
-  { spcommon, 0,   0,  52,  52, "/bmp_homura/eyeball.bmp"  },
-  { spcommon, 0,   0,  52,  52, "/bmp_homura/eyeball.bmp"  },
-  { spcommon, 0,   0,  52,  52, "/bmp_homura/eyeball.bmp"  },
-  { spcommon, 0,   0,  52,  52, "/bmp_homura/eyeball_surprise.bmp"  },
-  { spcommon, 0,   0,  52,  52, "/bmp_homura/eyeball.bmp"  },
-  { spcommon, 0,   0,  52,  52, "/bmp_homura/eyeball.bmp"  },
+  { spcommon, 0,   0,  52,  52, "/bmp_ai/eyeball_normal.bmp"  },
+  { spcommon, 0,   0,  52,  52, "/bmp_ai/eyeball_normal.bmp"  },
+  { spcommon, 0,   0,  52,  52, "/bmp_ai/eyeball_normal.bmp"  },
+  { spcommon, 0,   0,  52,  52, "/bmp_ai/eyeball_surprise.bmp"  },
+  { spcommon, 0,   0,  52,  52, "/bmp_ai/eyeball_normal.bmp"  },
+  { spcommon, 0,   0,  52,  52, "/bmp_ai/eyeball_normal.bmp"  },
 };
 
 // ---------- Mouth Config ----------
@@ -97,18 +94,18 @@ typedef struct SpriteParamsMouth {
 } params_mouth_s;
 
 static params_mouth_s mouth[MAX_EXPRESSION] = {
-    { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_normal.bmp", 
-      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_laugh.bmp", 
-      "/bmp_homura/mouth_cl_laugh.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_shy.bmp", 
-      "/bmp_homura/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_surprise.bmp", 
-      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_cl_normal.bmp", 
-      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 66, 34, "/bmp_homura/mouth_op_singing.bmp", 
-      "/bmp_homura/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 195, 67, 30, "/bmp_ai/mouth_op_laugh.bmp", 
+      "/bmp_ai/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 195, 67, 30, "/bmp_ai/mouth_op_laugh.bmp", 
+      "/bmp_ai/mouth_cl_laugh.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 195, 67, 30, "/bmp_ai/mouth_op_shy.bmp", 
+      "/bmp_ai/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 195, 67, 30, "/bmp_ai/mouth_op_surprise.bmp", 
+      "/bmp_ai/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 195, 67, 30, "/bmp_ai/mouth_cl_sleepy.bmp", 
+      "/bmp_ai/mouth_cl_sleepy.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 195, 67, 30, "/bmp_ai/mouth_op_sing.bmp", 
+      "/bmp_ai/mouth_cl_sing.bmp", 1.0, 1.0, 0.2, 1.0 },
 
 };
 
@@ -134,18 +131,19 @@ typedef struct SpriteParamsEyes {
 } params_eye_s;
 
 static params_eye_s eyes[MAX_EXPRESSION]= {
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 130, 0, 130, "/bmp_homura/eye_op_normal.bmp",
-      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 130, 0, 130, "/bmp_homura/eye_op_normal.bmp",
-      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 130, 0, 130, "/bmp_homura/eye_op_normal.bmp",
-      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 130, 0, 130, "/bmp_homura/eye_op_surprise.bmp",
-      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 140, 0, 140, "/bmp_homura/eye_op_sleepy.bmp",
-      "/bmp_homura/eye_cl_sleepy.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 120, 130, 200, 130, 56, 200, 0, 130, 0, 130, "/bmp_homura/eye_op_surprise.bmp",
-      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 125, 140, 195, 140, 52, 174, 0, 115, 0, 115, "/bmp_ai/eye_op_normal.bmp",
+      "/bmp_ai/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 125, 140, 195, 140, 52, 174, 0, 115, 0, 115, "/bmp_ai/eye_op_normal.bmp",
+      "/bmp_ai/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 125, 140, 195, 140, 52, 174, 0, 115, 0, 115, "/bmp_ai/eye_op_normal.bmp",
+      "/bmp_ai/eye_cl_shy.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 125, 140, 195, 140, 52, 174, 5, 120, 5, 120, "/bmp_ai/eye_op_normal.bmp",
+      "/bmp_ai/eye_cl_shy.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 125, 140, 195, 140, 52, 174, 0, 115, 0, 115, "/bmp_ai/eye_op_sleepy.bmp",
+      "/bmp_ai/eye_cl_shy.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 125, 140, 195, 140, 52, 174, 0, 115, 0, 115, "/bmp_ai/eye_op_normal.bmp",
+      "/bmp_ai/eye_cl_shy.bmp", 1.0, 1.0, 0.3, 1.0 },
+
 };
 
 // ---------- Eyebrows Config ----------
@@ -161,12 +159,12 @@ typedef struct SpriteParamsEyeBrows {
 } params_eyebrow_s;
 
 static params_eyebrow_s eyebrows[MAX_EXPRESSION]= {
-    { spcommon, 120,  85, 200, 85, 66, 33, "/bmp_homura/eyebrow_normal.bmp" },
-    { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_homura/eyebrow_laugh.bmp" },
-    { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_homura/eyebrow_shy.bmp" },
-    { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_homura/eyebrow_surprise.bmp" },
-    { spcommon, 125,  85, 195, 85, 66, 33, "/bmp_homura/eyebrow_shy.bmp" },
-    { spcommon, 120,  85, 200, 85, 66, 33, "/bmp_homura/eyebrow_normal.bmp" },
+    { spcommon, 125,  100, 195, 100, 58, 26, "/bmp_ai/eyebrow_normal.bmp" },
+    { spcommon, 125,  100, 195, 100, 58, 26, "/bmp_ai/eyebrow_laugh.bmp" },
+    { spcommon, 125,  100, 195, 100, 58, 26, "/bmp_ai/eyebrow_shy.bmp" },
+    { spcommon, 125,  100, 195, 100, 58, 26, "/bmp_ai/eyebrow_laugh.bmp" },
+    { spcommon, 125,  100, 195, 100, 58, 26, "/bmp_ai/eyebrow_shy.bmp" },
+    { spcommon, 125,  100, 195, 100, 58, 26, "/bmp_ai/eyebrow_sing.bmp" },
 };
 
 // move Parameters

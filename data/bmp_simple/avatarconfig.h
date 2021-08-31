@@ -73,18 +73,18 @@ typedef struct SpriteParams1phase {
 // 1 phase parts(head,body)
 static params_fixed_s fixedParts[FIXED_PARTS] = {
   //          x,   y,   w,   h, , bmpfilename
-  { spcommon, -15, -30, 340, 280, "/bmp_homura/head.bmp" },
-  { spcommon, -15, 208, 340, 32, "/bmp_homura/body.bmp"  },
+  { spcommon, -15, -30, 340, 280, "/bmp_simple/head.bmp" },
+  { spcommon, -15, 208, 340, 32, "/bmp_simple/body.bmp"  },
 };
 
 // eyeball
 static params_fixed_s eyeball[MAX_EXPRESSION] = {
-  { spcommon, 0,   0,  78, 78, "/bmp_homura/eyeball.bmp"  },
-  { spcommon, 0,   0,  78, 78, "/bmp_homura/eyeball.bmp"  },
-  { spcommon, 0,   0,  78, 78, "/bmp_homura/eyeball.bmp"  },
-  { spcommon, 0,   0,  78, 78, "/bmp_homura/eyeball.bmp"  }, //surprise.bmp"  },
-  { spcommon, 0,   0,  78, 78, "/bmp_homura/eyeball.bmp"  },
-  { spcommon, 0,   0,  78, 78, "/bmp_homura/eyeball.bmp"  },
+  { spcommon, 0,   0,  78, 78, "/bmp_simple/eyeball.bmp"  },
+  { spcommon, 0,   0,  78, 78, "/bmp_simple/eyeball.bmp"  },
+  { spcommon, 0,   0,  78, 78, "/bmp_simple/eyeball.bmp"  },
+  { spcommon, 0,   0,  78, 78, "/bmp_simple/eyeball.bmp"  }, //surprise.bmp"  },
+  { spcommon, 0,   0,  78, 78, "/bmp_simple/eyeball.bmp"  },
+  { spcommon, 0,   0,  78, 78, "/bmp_simple/eyeball.bmp"  },
 };
 
 // ---------- Mouth Config ----------
@@ -103,18 +103,18 @@ typedef struct SpriteParamsMouth {
 } params_mouth_s;
 
 static params_mouth_s mouth[MAX_EXPRESSION] = {
-    { spcommon, 160, 190, 99, 51, "/bmp_homura/mouth_op_normal.bmp", 
-      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 99, 51, "/bmp_homura/mouth_op_laugh.bmp", 
-      "/bmp_homura/mouth_cl_laugh.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 99, 51, "/bmp_homura/mouth_op_shy.bmp", 
-      "/bmp_homura/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 99, 51, "/bmp_homura/mouth_op_surprise.bmp", 
-      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 99, 51, "/bmp_homura/mouth_cl_normal.bmp", 
-      "/bmp_homura/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
-    { spcommon, 160, 190, 99, 51, "/bmp_homura/mouth_op_shy.bmp", 
-      "/bmp_homura/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 190, 99, 51, "/bmp_simple/mouth_op_normal.bmp", 
+      "/bmp_simple/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 190, 99, 51, "/bmp_simple/mouth_op_laugh.bmp", 
+      "/bmp_simple/mouth_cl_laugh.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 190, 99, 51, "/bmp_simple/mouth_op_shy.bmp", 
+      "/bmp_simple/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 190, 99, 51, "/bmp_simple/mouth_op_surprise.bmp", 
+      "/bmp_simple/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 190, 99, 51, "/bmp_simple/mouth_cl_normal.bmp", 
+      "/bmp_simple/mouth_cl_normal.bmp", 1.0, 1.0, 0.2, 1.0 },
+    { spcommon, 160, 190, 99, 51, "/bmp_simple/mouth_op_shy.bmp", 
+      "/bmp_simple/mouth_cl_shy.bmp", 1.0, 1.0, 0.2, 1.0 },
 
 };
 
@@ -140,18 +140,18 @@ typedef struct SpriteParamsEyes {
 } params_eye_s;
 
 static params_eye_s eyes[MAX_EXPRESSION]= {
-    { spcommon, 80, 110, 240, 110, 84, 300, 0, 195, 0, 195, "/bmp_homura/eye_op_normal.bmp",
-      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 80, 110, 240, 110, 84, 300, 0, 195, 0, 195, "/bmp_homura/eye_op_normal.bmp",
-      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 80, 110, 240, 110, 84, 300, 0, 195, 0, 195, "/bmp_homura/eye_op_normal.bmp",
-      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 80, 110, 240, 110, 84, 300, 0, 195, 0, 195, "/bmp_homura/eye_op_surprise.bmp",
-      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 80, 110, 240, 110, 84, 300, 0, 210, 0, 210, "/bmp_homura/eye_op_sleepy.bmp",
-      "/bmp_homura/eye_cl_sleepy.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 80, 110, 240, 110, 84, 300, 0, 195, 0, 195, "/bmp_homura/eye_op_surprise.bmp",
-      "/bmp_homura/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 80, 110, 240, 110, 84, 300, 0, 195, 0, 195, "/bmp_simple/eye_op_normal.bmp",
+      "/bmp_simple/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 80, 110, 240, 110, 84, 300, 0, 195, 0, 195, "/bmp_simple/eye_op_normal.bmp",
+      "/bmp_simple/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 80, 110, 240, 110, 84, 300, 0, 195, 0, 195, "/bmp_simple/eye_op_normal.bmp",
+      "/bmp_simple/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 80, 110, 240, 110, 84, 300, 0, 195, 0, 195, "/bmp_simple/eye_op_surprise.bmp",
+      "/bmp_simple/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 80, 110, 240, 110, 84, 300, 0, 210, 0, 210, "/bmp_simple/eye_op_sleepy.bmp",
+      "/bmp_simple/eye_cl_sleepy.bmp", 1.0, 1.0, 0.3, 1.0 },
+    { spcommon, 80, 110, 240, 110, 84, 300, 0, 195, 0, 195, "/bmp_simple/eye_op_surprise.bmp",
+      "/bmp_simple/eye_cl_normal.bmp", 1.0, 1.0, 0.3, 1.0 },
 };
 
 // ---------- Eyebrows Config ----------
@@ -167,12 +167,12 @@ typedef struct SpriteParamsEyeBrows {
 } params_eyebrow_s;
 
 static params_eyebrow_s eyebrows[MAX_EXPRESSION]= {
-    { spcommon, 80,  65, 240, 65, 66, 33, "/bmp_homura/eyebrow_normal.bmp" },
-    { spcommon, 85,  65, 235, 65, 66, 33, "/bmp_homura/eyebrow_laugh.bmp" },
-    { spcommon, 85,  65, 235, 65, 66, 33, "/bmp_homura/eyebrow_shy.bmp" },
-    { spcommon, 85,  65, 235, 65, 66, 33, "/bmp_homura/eyebrow_surprise.bmp" },
-    { spcommon, 85,  65, 235, 65, 66, 33, "/bmp_homura/eyebrow_shy.bmp" },
-    { spcommon, 80,  65, 240, 65, 66, 33, "/bmp_homura/eyebrow_normal.bmp" },
+    { spcommon, 80,  65, 240, 65, 66, 33, "/bmp_simple/eyebrow_normal.bmp" },
+    { spcommon, 85,  65, 235, 65, 66, 33, "/bmp_simple/eyebrow_laugh.bmp" },
+    { spcommon, 85,  65, 235, 65, 66, 33, "/bmp_simple/eyebrow_shy.bmp" },
+    { spcommon, 85,  65, 235, 65, 66, 33, "/bmp_simple/eyebrow_surprise.bmp" },
+    { spcommon, 85,  65, 235, 65, 66, 33, "/bmp_simple/eyebrow_shy.bmp" },
+    { spcommon, 80,  65, 240, 65, 66, 33, "/bmp_simple/eyebrow_normal.bmp" },
 };
 
 // move Parameters
