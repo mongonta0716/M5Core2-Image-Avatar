@@ -333,7 +333,7 @@ xMutex = xSemaphoreCreateMutex();
   tft.setSwapBytes(true);
   tft.fillScreen(0x000000U);
   delay(100);
-  avatar = new ImageAvatar(&tft, SINGING);
+  avatar = new ImageAvatar(&tft, NORMAL);
   startThreads();
 #ifdef CONFIG_USE_TTS
   TTS.create(NULL);
