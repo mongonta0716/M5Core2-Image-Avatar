@@ -1,9 +1,5 @@
 #include <Arduino.h>
-// ---------- Options -------------------------
-#define USE_TTS     // AquesTalkTTSを使用する場合はコメントを外す
-#define USE_MIC     // need M5Core2 or M5Stack Fire or M5Go Bottom's MIC
-//#define USE_WIFI    // M5Stack Fire Only(Because Gray and Basic dont have enough memory.)
-// ---------- Options -------------------------
+#include "M5AvatarConfig.h"
 
 
 // ----- for DEBUG -----
@@ -13,7 +9,7 @@
 
 #include <ESP32-Chimera-Core.h>
 #include <Wire.h>
-#ifdef USE_WIFI
+#ifdef CONFIG_USE_WIFI
 #include <WiFi.h>
 #include <esp_now.h>
 #include <ESP32Servo.h>
@@ -24,15 +20,18 @@
 #include <LovyanGFX.hpp>
 #include "colorpalette.h"
 #include "M5StackImageAvatar.hpp"
-#ifdef USE_TTS
+#ifdef CONFIG_USE_TTS
   #include "AquesTalkTTS.h"
   #include "driver/dac.h"
 #endif
-#ifdef USE_MIC
+#ifdef CONFIG_USE_MIC
   #include "driver/i2s.h"
+  #include "M5Core2_mic_speaker.h"
+  extern bool InitI2SSpeakOrMic(int mode);
+  extern float calcMouthRatio();
 #endif
 
-#ifdef USE_WIFI
+#ifdef CONFIG_USE_WIFI
 #define BUFFER_LEN 250
 esp_now_peer_info_t esp_ap;
 const uint8_t *peer_addr = esp_ap.peer_addr;
@@ -53,21 +52,6 @@ static LGFX tft;
 ImageAvatar *avatar;
 uint32_t looptime = 0;
 
-#ifdef USE_MIC
-// マイクの機能は後で実装
-  #define CONFIG_I2S_BCK_PIN 12
-  #define CONFIG_I2S_LRCK_PIN 0
-  #define CONFIG_I2S_DATA_PIN 2
-  #define CONFIG_I2S_DATA_IN_PIN 34
-
-  #define Speak_I2S_NUMBER I2S_NUM_0 // AquesTalkで使うポートと同じ（スピーカーと併用できないため）
-
-  #define MODE_MIC 0
-  #define MODE_SPK 1
-  #define DATA_SIZE 128 
-
-  uint8_t microphonedata0[DATA_SIZE];
-#endif
 
 // Start----- Avatar dynamic variables ----------
 static uint8_t expression = NORMAL;
@@ -85,7 +69,7 @@ TaskHandle_t breathTaskHandle;
 TaskHandle_t lipsyncTaskHandle;
 SemaphoreHandle_t xMutex = NULL;
 
-#ifdef USE_WIFI
+#ifdef CONFIG_USE_WIFI
 void onRecvData(const uint8_t *mac_addr, const uint8_t *data, int data_len) {
   // ログを液晶に表示したい場合は排他をかけないと失敗する場合あり、シリアルは大丈夫。
   Serial.println("onRecvData");
@@ -146,7 +130,7 @@ void peerClients() {
 void printDebug(const char *str) {
 #ifdef DEBUG
   Serial.println(str);
-#ifdef USE_WIFI
+#ifdef CONFIG_USE_WIFI
   uint8_t buf[BUFFER_LEN];
   memcpy(buf, str, BUFFER_LEN);
   peerClients();
@@ -154,68 +138,11 @@ void printDebug(const char *str) {
 #endif
 #endif
 }
-// Microphone
-#ifdef USE_MIC
-#ifdef ARDUINO_M5STACK_Core2
-bool InitI2SSpeakOrMic(int mode)
-{
-    esp_err_t err = ESP_OK;
-    i2s_driver_uninstall(Speak_I2S_NUMBER);
-    i2s_config_t i2s_config = {
-        .mode = (i2s_mode_t)(I2S_MODE_MASTER),
-        .sample_rate = 44100,
-        .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT, // is fixed at 12bit, stereo, MSB
-        .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
-        .communication_format = I2S_COMM_FORMAT_I2S,
-        .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-        .dma_buf_count = 2,
-        .dma_buf_len = 128,
-    };
-    if (mode == MODE_MIC)
-    {
-        i2s_config.mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_PDM);
-    }
-    else
-    {
-        i2s_config.mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX);
-        i2s_config.use_apll = false;
-        i2s_config.tx_desc_auto_clear = true;
-    }
-    err += i2s_driver_install(Speak_I2S_NUMBER, &i2s_config, 0, NULL);
-    i2s_pin_config_t tx_pin_config;
-    tx_pin_config.bck_io_num = CONFIG_I2S_BCK_PIN;
-    tx_pin_config.ws_io_num = CONFIG_I2S_LRCK_PIN;
-    tx_pin_config.data_out_num = CONFIG_I2S_DATA_PIN;
-    tx_pin_config.data_in_num = CONFIG_I2S_DATA_IN_PIN;
-    err += i2s_set_pin(Speak_I2S_NUMBER, &tx_pin_config);
-    err += i2s_set_clk(Speak_I2S_NUMBER, 44100, I2S_BITS_PER_SAMPLE_16BIT, I2S_CHANNEL_MONO);
-    return true;
-}
-float calcMouthRatio() {
-      size_t byte_read;
-      i2s_read(Speak_I2S_NUMBER, (char *)microphonedata0, DATA_SIZE, &byte_read, (100 / portTICK_RATE_MS));
-      int16_t mic_level = (*(int16_t *)microphonedata0);
-      char message[20] = "";
-      sprintf(message, "mic_level:%d\n", mic_level);
-      printDebug(message);
-      float mouth_ratio = 0.0f;
-      if (abs(mic_level) > 300) {
-        mouth_ratio = 1.0f;
-      } else if (abs(mic_level) < 50) {
-        mouth_ratio = 0.0f;
-      } else {
-        mouth_ratio = (float)(abs(mic_level) / 300.0f);
-      }
-      return mouth_ratio;
-}
-
-#endif
-#endif
 void waitTTS() {
   while (TTS.isPlay()) {
     vTaskDelay(10/portTICK_RATE_MS);
   }
-  #ifdef USE_MIC
+  #ifdef CONFIG_USE_MIC
     InitI2SSpeakOrMic(MODE_MIC);
   #endif
   isTTS = false;
@@ -315,7 +242,7 @@ void blink(void *args) {
 void lipsync(void *args) {
   for(;;) {
     if (isTTS) {
-#ifdef USE_TTS
+#ifdef CONFIG_USE_TTS
       // AquesTalkTTSを利用する場合の口の動き
       int level = TTS.getLevel();
       float f = level / 12000.0;
@@ -327,7 +254,7 @@ void lipsync(void *args) {
     } else {
       // 通常時の口の動き
 
-#ifdef USE_MIC
+#ifdef CONFIG_USE_MIC
       // マイク使用時の口の動き（未実装）
 
       float f = calcMouthRatio();
@@ -397,7 +324,7 @@ void setup() {
   M5.begin();
 #ifdef ARDUINO_M5STACK_Core2
   M5.Axp.SetSpkEnable(true);
-  #ifdef USE_MIC
+  #ifdef CONFIG_USE_MIC
     InitI2SSpeakOrMic(MODE_MIC); // I2Sは通常時はマイク（AquesTalk内でTTSを使うときにSPKになる。）
   #endif
 #endif
@@ -407,7 +334,7 @@ void setup() {
   Serial.println("Start");
 
 xMutex = xSemaphoreCreateMutex();
-#ifdef USE_WIFI
+#ifdef CONFIG_USE_WIFI
   // ESPNOW init
   WiFi.mode(WIFI_STA);
   ESP_ERROR_CHECK(esp_now_init());
@@ -426,7 +353,7 @@ xMutex = xSemaphoreCreateMutex();
   delay(100);
   avatar = new ImageAvatar(&tft, SINGING);
   startThreads();
-#ifdef USE_TTS
+#ifdef CONFIG_USE_TTS
   TTS.create(NULL);
   //TTS.play("ohayougozaimasu", 20);
 #endif
@@ -446,12 +373,12 @@ void loop() {
   M5.update();
 //  Serial.printf("Free Heap Size = %d\n", esp_get_free_heap_size());
 
-#ifdef USE_MIC
+#ifdef CONFIG_USE_MIC
 // マイクの処理は作り直し
 #endif  
   
   if(M5.BtnA.wasPressed()) {
-#ifdef USE_TTS
+#ifdef CONFIG_USE_TTS
     isTTS = true;
     TTS.play("emufaibu_sutaxtu_ku koa'tsu-/tano'shiide_su.", 20);
     printFreeHeap();
@@ -461,7 +388,7 @@ void loop() {
     waitTTS();
   }
   if(M5.BtnB.wasPressed()) {
-#ifdef USE_TTS
+#ifdef CONFIG_USE_TTS
     isTTS = true;
     TTS.play("konnnichiwa.", 20);
     printFreeHeap();
