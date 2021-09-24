@@ -1,25 +1,18 @@
 #include <Arduino.h>
-#include "M5AvatarConfig.h"
-
+#include "M5AvatarOptionConfig.h"
 
 // ----- for DEBUG -----
 //#define DEBUG
-//#define TEST_MODE // テストモードの切り替え口の開閉を自動
 // ---------------------
 
 #include <ESP32-Chimera-Core.h>
 #include <Wire.h>
-#ifdef CONFIG_USE_WIFI
-#include <WiFi.h>
-#include <esp_now.h>
-#include <ESP32Servo.h>
-#include <ArduinoJson.h>
-#include "M5AvatarJson.h"
-#endif
+
 #define LGFX_AUTODETECT
 #include <LovyanGFX.hpp>
 #include "colorpalette.h"
 #include "M5StackImageAvatar.hpp"
+
 #ifdef CONFIG_USE_TTS
   #include "AquesTalkTTS.h"
   #include "driver/dac.h"
@@ -32,6 +25,11 @@
 #endif
 
 #ifdef CONFIG_USE_WIFI
+#include <WiFi.h>
+#include <esp_now.h>
+#include <ESP32Servo.h>
+#include <ArduinoJson.h>
+#include "M5AvatarJson.h"
 #define BUFFER_LEN 250
 esp_now_peer_info_t esp_ap;
 const uint8_t *peer_addr = esp_ap.peer_addr;
@@ -206,7 +204,6 @@ void drawLoop(void *args) {
     xStatus = xSemaphoreTake(xMutex, xTicksToWait);
     if (xStatus == pdTRUE) {
       avatar->drawAll();
-//        avatar->drawTest();
     }
     xSemaphoreGive(xMutex);
     vTaskDelay(33);
@@ -249,7 +246,7 @@ void lipsync(void *args) {
       float openratio = min(1.0f, last_mouth_ratio + f / 2.0f);
       last_mouth_ratio = f;
       avatar->setMouthOpen(openratio);      
-      //vTaskDelay(50);
+      vTaskDelay(33);
 #endif
     } else {
       // 通常時の口の動き
@@ -262,26 +259,13 @@ void lipsync(void *args) {
       vTaskDelay(33);
 #else
       avatar->setMouthOpen(0.0f);
-#endif
-#ifdef TEST_MODE
-      for(float f=0.0; f<=1.0; f=f+0.1) {
-        avatar->setMouthOpen(f);
-        delay(33);
-      }
-      vTaskDelay(500);
-      for(float f=1.0; f>=0.0; f=f-0.1) {
-        avatar->setMouthOpen(f);
-        delay(33);
-      }
-      vTaskDelay(500);
-#endif
       vTaskDelay(33);
+#endif
     }
   }
 }
 
 void startThreads() {
-  printDebug("----- startThreads -----");
   if (xMutex != NULL) {
     xTaskCreateUniversal(drawLoop,
                          "drawLoop",
@@ -312,7 +296,6 @@ void startThreads() {
                          &lipsyncTaskHandle,
                          tskNO_AFFINITY);
   }
-  printDebug("----- End of startThreads -----");
 }
 
 // End------- xTask functions ----------
@@ -343,7 +326,6 @@ xMutex = xSemaphoreCreateMutex();
   printDebug("M5StackImageAvatarStart!");
 
   
-  printDebug("---------- TFT Init ----------");
   // tft hardware init 
   tft.setRotation(1);
   tft.setBrightness(200);
@@ -357,12 +339,6 @@ xMutex = xSemaphoreCreateMutex();
   TTS.create(NULL);
   //TTS.play("ohayougozaimasu", 20);
 #endif
-// #define TEST
-#ifdef TEST
-  avatar->drawAll();
-  avatar->drawTest();
-#endif
-  printDebug("EndofSetup");
 }
 void printFreeHeap() {
     char buf[250];
@@ -381,7 +357,6 @@ void loop() {
 #ifdef CONFIG_USE_TTS
     isTTS = true;
     TTS.play("emufaibu_sutaxtu_ku koa'tsu-/tano'shiide_su.", 20);
-    printFreeHeap();
 #endif
     swing(20, 3);
     wink(LEFT, 2, 5);
@@ -391,7 +366,6 @@ void loop() {
 #ifdef CONFIG_USE_TTS
     isTTS = true;
     TTS.play("konnnichiwa.", 20);
-    printFreeHeap();
     waitTTS();
 #endif
     eyeballmove();
@@ -410,13 +384,4 @@ void loop() {
     vTaskDelay(100);
     vTaskResume(drawTaskHandle);
   }
-#ifdef DEBUG2
-  tft.setCursor(0,225);
-  tft.setTextSize(2);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);
-  tft.startWrite();
-  tft.printf("%d ", (millis() - looptime));
-  tft.endWrite();
-  looptime = millis();
-#endif
 }
