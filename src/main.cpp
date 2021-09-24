@@ -2,7 +2,7 @@
 // ---------- Options -------------------------
 #define USE_TTS     // AquesTalkTTSを使用する場合はコメントを外す
 #define USE_MIC     // need M5Core2 or M5Stack Fire or M5Go Bottom's MIC
-#define USE_WIFI    // M5Stack Fire Only(Because Gray and Basic dont have enough memory.)
+//#define USE_WIFI    // M5Stack Fire Only(Because Gray and Basic dont have enough memory.)
 // ---------- Options -------------------------
 
 
@@ -333,6 +333,8 @@ void lipsync(void *args) {
       float f = calcMouthRatio();
       avatar->setMouthOpen(f);
       vTaskDelay(33);
+#else
+      avatar->setMouthOpen(0.0f);
 #endif
 #ifdef TEST_MODE
       for(float f=0.0; f<=1.0; f=f+0.1) {
