@@ -137,6 +137,7 @@ void printDebug(const char *str) {
 #endif
 }
 void waitTTS() {
+#ifdef CONFIG_USE_TTS
   while (TTS.isPlay()) {
     vTaskDelay(10/portTICK_RATE_MS);
   }
@@ -144,6 +145,7 @@ void waitTTS() {
     InitI2SSpeakOrMic(MODE_MIC);
   #endif
   isTTS = false;
+#endif
 }
 
 

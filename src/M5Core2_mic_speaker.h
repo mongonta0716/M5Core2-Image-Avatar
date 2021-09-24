@@ -17,9 +17,9 @@
   #define MODE_SPK 1
   #define DATA_SIZE 128 
 
-#endif
 
 bool InitI2SSpeakOrMic(int mode);
 
 float calcMouthRatio();
+#endif
 #endif

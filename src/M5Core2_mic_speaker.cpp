@@ -1,7 +1,7 @@
 #include "M5Core2_mic_speaker.h"
 #include "driver/i2s.h"
 
-
+#ifdef CONFIG_USE_MIC
 uint8_t microphonedata0[DATA_SIZE];
 
 // Microphone
@@ -57,4 +57,4 @@ float calcMouthRatio() {
       }
       return mouth_ratio;
 }
-
+#endif
