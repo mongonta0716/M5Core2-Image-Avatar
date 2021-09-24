@@ -131,17 +131,17 @@ typedef struct SpriteParamsEyes {
 } params_eye_s;
 
 static params_eye_s eyes[MAX_EXPRESSION]= {
-    { spcommon, 80, 110, 240, 110, 58, 240, 20, 175, 20, 175, "/bmp_serval/eye_op.bmp",
+    { spcommon, 110, 110, 210, 110, 58, 240, 10, 175, 10, 175, "/bmp_serval/eye_op.bmp",
       "/bmp_serval/eye_cl.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 80, 110, 240, 110, 58, 240, 20, 175, 20, 175, "/bmp_serval/eye_op.bmp",
+    { spcommon, 110, 110, 210, 110, 58, 240, 10, 175, 10, 175, "/bmp_serval/eye_op.bmp",
       "/bmp_serval/eye_cl.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 80, 110, 240, 110, 58, 240, 20, 175, 20, 175, "/bmp_serval/eye_op.bmp",
+    { spcommon, 110, 110, 210, 110, 58, 240, 10, 175, 10, 175, "/bmp_serval/eye_op.bmp",
       "/bmp_serval/eye_cl.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 80, 110, 240, 110, 58, 240, 20, 175, 20, 175, "/bmp_serval/eye_op.bmp",
+    { spcommon, 110, 110, 210, 110, 58, 240, 10, 175, 10, 175, "/bmp_serval/eye_op.bmp",
       "/bmp_serval/eye_cl.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 80, 110, 240, 110, 58, 240, 20, 175, 20, 175, "/bmp_serval/eye_op.bmp",
+    { spcommon, 110, 110, 210, 110, 58, 240, 10, 175, 10, 175, "/bmp_serval/eye_op.bmp",
       "/bmp_serval/eye_cl.bmp", 1.0, 1.0, 0.3, 1.0 },
-    { spcommon, 80, 110, 240, 110, 58, 240, 20, 175, 20, 175, "/bmp_serval/eye_op.bmp",
+    { spcommon, 110, 110, 210, 110, 58, 240, 10, 175, 10, 175, "/bmp_serval/eye_op.bmp",
       "/bmp_serval/eye_cl.bmp", 1.0, 1.0, 0.3, 1.0 },
 };
 
@@ -158,12 +158,12 @@ typedef struct SpriteParamsEyeBrows {
 } params_eyebrow_s;
 
 static params_eyebrow_s eyebrows[MAX_EXPRESSION]= {
-    { spcommon, 80,  65, 240, 65, 70, 27, "/bmp_serval/eyebrow.bmp" },
-    { spcommon, 85,  65, 235, 65, 70, 27, "/bmp_serval/eyebrow.bmp" },
-    { spcommon, 85,  65, 235, 65, 70, 27, "/bmp_serval/eyebrow.bmp" },
-    { spcommon, 85,  65, 235, 65, 70, 27, "/bmp_serval/eyebrow.bmp" },
-    { spcommon, 85,  65, 235, 65, 70, 27, "/bmp_serval/eyebrow.bmp" },
-    { spcommon, 80,  65, 240, 65, 70, 27, "/bmp_serval/eyebrow.bmp" },
+    { spcommon, 110, 65, 210, 65,  70, 27, "/bmp_serval/eyebrow.bmp" },
+    { spcommon, 110, 65, 210, 65,  70, 27, "/bmp_serval/eyebrow.bmp" },
+    { spcommon, 110, 65, 210, 65,  70, 27, "/bmp_serval/eyebrow.bmp" },
+    { spcommon, 110, 65, 210, 65,  70, 27, "/bmp_serval/eyebrow.bmp" },
+    { spcommon, 110, 65, 210, 65,  70, 27, "/bmp_serval/eyebrow.bmp" },
+    { spcommon, 110, 65, 210, 65,  70, 27, "/bmp_serval/eyebrow.bmp" },
 };
 
 // move Parameters
