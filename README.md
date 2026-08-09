@@ -8,7 +8,7 @@
 
 # 注意
 
-　M5Stack Image AvatarはSpriteの拡大縮小・回転機能を利用しているため[LovyanGFXライブラリ](https://github.com/lovyan03/LovyanGFX)が必要です。（M5Stackライブラリには拡大縮小機能がありません。）
+　M5Stack Image AvatarはSpriteの拡大縮小・回転機能を利用しているため[M5Unifiedライブラリ](https://github.com/m5stack/M5Unified)（M5GFXを内包）が必要です。（M5Stackライブラリには拡大縮小機能がありません。）
 
 
 # 概要(Overview)
@@ -20,7 +20,7 @@
 - PlatformIO
 
 ## 必要なライブラリ
-- [LovyanGFX](https://github.com/lovyan03/LovyanGFX)
+- [M5Unified](https://github.com/m5stack/M5Unified)（[M5GFX](https://github.com/m5stack/M5GFX)を内包）
 
 ## AquesTalkのインストール
 [AquesTalk for ESP32](https://www.a-quest.com/products/aquestalk_esp32.html)に従ってインストールしてください。<br>
@@ -38,8 +38,9 @@ SDカードのルートに「data」フォルダ配下にあるフォルダを�
 使用したいアバターモデルのavatarconfig.hをsrcフォルダに上書きコピーしてビルドします。<br>
 
 - ボタンA：Avatarが動きます。
-- ボタンB：目玉が左右に動きます。
+- ボタンB：「こんにちは」を喋ります。（USE_TTS有効時）
 - ボタンC：感情が変わります。
+- 目玉は常に自然なサッケード（ランダムな視線移動）で動き続けます。
 
 ## Avatarモデル
 下記の3種類あります。

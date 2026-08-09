@@ -5,18 +5,9 @@
 #include "M5AvatarOptionConfig.h"
 
 #ifdef CONFIG_USE_MIC
-// マイクの機能は後で実装
-  #define CONFIG_I2S_BCK_PIN 12
-  #define CONFIG_I2S_LRCK_PIN 0
-  #define CONFIG_I2S_DATA_PIN 2
-  #define CONFIG_I2S_DATA_IN_PIN 34
-
-  #define Speak_I2S_NUMBER I2S_NUM_0 // AquesTalkで使うポートと同じ（スピーカーと併用できないため）
-
+  // M5.Mic（M5Unified）を使用します。ピン設定は機種ごとにM5Unifiedが自動判別します。
   #define MODE_MIC 0
-  #define MODE_SPK 1
-  #define DATA_SIZE 128 
-
+  #define MODE_SPK 1 // AquesTalkと同じI2Sポートを使うため、TTS再生前にマイクを止める場合に使用
 
 bool InitI2SSpeakOrMic(int mode);
 

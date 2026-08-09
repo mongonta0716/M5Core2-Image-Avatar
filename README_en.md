@@ -7,7 +7,7 @@ M5Stack Image Avatar for M5Stack Core2
 [日本語](README.md)｜English
 
 # Notice
- The M5Stack Image Avatar uses the scaling and rotation functions of Sprite, so the [LovyanGFX library](https://github.com/lovyan03/LovyanGFX) is required. (The M5Stack library does not have a scaling function.
+ The M5Stack Image Avatar uses the scaling and rotation functions of Sprite, so the [M5Unified library](https://github.com/m5stack/M5Unified) (which bundles M5GFX) is required. (The plain M5Stack library does not have a scaling function.
 
 
 # Overview
@@ -20,7 +20,7 @@ M5Stack Image Avatar for M5Stack Core2
 - PlatformIO
 
 ## Requirement
-- [LovyanGFX](https://github.com/lovyan03/LovyanGFX)
+- [M5Unified](https://github.com/m5stack/M5Unified) (bundles [M5GFX](https://github.com/m5stack/M5GFX))
 
 # Supported models
 - M5Stack Core2
@@ -34,8 +34,9 @@ Copy the folder under the "data" folder to the root of the SD card<br>.
 Copy the avatarconfig.h file of the avatar model you want to use to the src folder and build it. <BR>
 
 - Button A: The avatar will move.
-- Button B: The eyeballs will move left and right.
+- Button B: Says "Konnichiwa" (when USE_TTS is enabled).
 - Button C: Emotions will change.
+- The eyes always keep moving with natural saccades (random gaze shifts).
 
 ## Avatar models
 There are three types as follows.

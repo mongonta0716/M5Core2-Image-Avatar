@@ -1,60 +1,64 @@
 #include "M5Core2_mic_speaker.h"
-#include "driver/i2s.h"
 
 #ifdef CONFIG_USE_MIC
-uint8_t microphonedata0[DATA_SIZE];
+#include <M5Unified.h>
+#include "fft.hpp"
 
-// Microphone
+// 口パクロジックはStackchan_Micを参考にしています。
+// https://github.com/mongonta0716/Stackchan_Mic
+#define LIPSYNC_LEVEL_MAX 10.0f
+static constexpr size_t WAVE_SIZE = 256 * 2;
+static constexpr uint32_t RECORD_SAMPLERATE = 16000;
+
+static fft_t fft;
+static int16_t *rec_data = NULL;
+static uint8_t lipsync_shift_level = 10; // リップシンクのデータをどのくらい小さくするか設定。口の開き方が変わります。
+static float lipsync_max = LIPSYNC_LEVEL_MAX;   // リップシンクの単位。ここを増減すると口の開き方が変わります。
+static uint32_t last_lipsync_max_msec = 0;
+
 bool InitI2SSpeakOrMic(int mode)
 {
-    esp_err_t err = ESP_OK;
-    i2s_driver_uninstall(Speak_I2S_NUMBER);
-    i2s_config_t i2s_config = {
-        .mode = (i2s_mode_t)(I2S_MODE_MASTER),
-        .sample_rate = 44100,
-        .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT, // is fixed at 12bit, stereo, MSB
-        .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
-        .communication_format = I2S_COMM_FORMAT_I2S,
-        .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-        .dma_buf_count = 2,
-        .dma_buf_len = 128,
-    };
-    if (mode == MODE_MIC)
-    {
-        i2s_config.mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_PDM);
+    if (mode == MODE_MIC) {
+        if (!rec_data) {
+            rec_data = (int16_t *)heap_caps_malloc(WAVE_SIZE * sizeof(int16_t), MALLOC_CAP_8BIT);
+            memset(rec_data, 0, WAVE_SIZE * sizeof(int16_t));
+        }
+        M5.Mic.begin();
+    } else {
+        // AquesTalkが同じI2Sポートを使うのでマイクを止める
+        M5.Mic.end();
     }
-    else
-    {
-        i2s_config.mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX);
-        i2s_config.use_apll = false;
-        i2s_config.tx_desc_auto_clear = true;
-    }
-    err += i2s_driver_install(Speak_I2S_NUMBER, &i2s_config, 0, NULL);
-    i2s_pin_config_t tx_pin_config;
-    tx_pin_config.bck_io_num = CONFIG_I2S_BCK_PIN;
-    tx_pin_config.ws_io_num = CONFIG_I2S_LRCK_PIN;
-    tx_pin_config.data_out_num = CONFIG_I2S_DATA_PIN;
-    tx_pin_config.data_in_num = CONFIG_I2S_DATA_IN_PIN;
-    err += i2s_set_pin(Speak_I2S_NUMBER, &tx_pin_config);
-    err += i2s_set_clk(Speak_I2S_NUMBER, 44100, I2S_BITS_PER_SAMPLE_16BIT, I2S_CHANNEL_MONO);
     return true;
 }
 
 float calcMouthRatio() {
-      size_t byte_read;
-      i2s_read(Speak_I2S_NUMBER, (char *)microphonedata0, DATA_SIZE, &byte_read, (100 / portTICK_RATE_MS));
-      int16_t mic_level = (*(int16_t *)microphonedata0);
-      char message[20] = "";
-      sprintf(message, "mic_level:%d\n", mic_level);
-      Serial.print(message);
-      float mouth_ratio = 0.0f;
-      if (abs(mic_level) > 300) {
-        mouth_ratio = 1.0f;
-      } else if (abs(mic_level) < 50) {
+    uint64_t level = 0;
+    if (M5.Mic.record(rec_data, WAVE_SIZE, RECORD_SAMPLERATE)) {
+        fft.exec(rec_data);
+        for (size_t bx = 5; bx <= 60; ++bx) {
+            int32_t f = fft.get(bx);
+            level += abs(f);
+        }
+    }
+    uint32_t temp_level = level >> lipsync_shift_level;
+    float mouth_ratio = (float)(temp_level / lipsync_max);
+    if (mouth_ratio <= 0.01f) {
         mouth_ratio = 0.0f;
-      } else {
-        mouth_ratio = (float)(abs(mic_level) / 300.0f);
-      }
-      return mouth_ratio;
+        if ((millis() - last_lipsync_max_msec) > 500) {
+            // 0.5秒以上無音の場合リップシンク上限をリセット
+            last_lipsync_max_msec = millis();
+            lipsync_max = LIPSYNC_LEVEL_MAX;
+        }
+    } else {
+        if (mouth_ratio > 1.3f) {
+            if (mouth_ratio > 1.5f) {
+                // リップシンク上限を大幅に超えた場合、上限を上げていく。
+                lipsync_max += 10.0f;
+            }
+            mouth_ratio = 1.3f;
+        }
+        last_lipsync_max_msec = millis(); // 無音でない場合は更新
+    }
+    return mouth_ratio;
 }
 #endif

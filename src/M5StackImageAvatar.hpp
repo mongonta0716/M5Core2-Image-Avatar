@@ -2,7 +2,7 @@
 #define _M5STACKIMAGEAVATAR_H_
 
 #ifndef ARDUINO
-  #include <LovyanGFX.hpp>
+  #include <M5GFX.h>
 #endif
 #include "avatarconfig.h"
 #ifdef USE_PALETTE
@@ -11,17 +11,17 @@
 
 class ImageAvatar {
     private:
-        LGFX  *_tft;
-        LGFX_Sprite *_fixed_sp[FIXED_PARTS];
-        LGFX_Sprite *_mouth_sp;
-        LGFX_Sprite *_eyeball_sp;
-        LGFX_Sprite *_eyelid_sp;
-        LGFX_Sprite *_eye_r_sp;
-        LGFX_Sprite *_eye_l_sp;
-        LGFX_Sprite *_eyebrow_sp;
-        LGFX_Sprite *_lcd_sp;
-        LGFX_Sprite *_eyelid_cl_sp;
-        LGFX_Sprite *_mouth_cl_sp;
+        M5GFX  *_tft;
+        M5Canvas *_fixed_sp[FIXED_PARTS];
+        M5Canvas *_mouth_sp;
+        M5Canvas *_eyeball_sp;
+        M5Canvas *_eyelid_sp;
+        M5Canvas *_eye_r_sp;
+        M5Canvas *_eye_l_sp;
+        M5Canvas *_eyebrow_sp;
+        M5Canvas *_lcd_sp;
+        M5Canvas *_eyelid_cl_sp;
+        M5Canvas *_mouth_cl_sp;
         move_param_s _mv;
 
         bool _isChange;
@@ -151,20 +151,20 @@ class ImageAvatar {
         }
 
     public:
-        ImageAvatar(LGFX *tft, uint8_t expression) {
+        ImageAvatar(M5GFX *tft, uint8_t expression) {
             this->_tft = tft;
             for (int i=0; i<FIXED_PARTS; i++) {
-              this->_fixed_sp[i] = new LGFX_Sprite(tft);
+              this->_fixed_sp[i] = new M5Canvas(tft);
             }
-            this->_mouth_sp   = new LGFX_Sprite(tft);
-            this->_eyeball_sp = new LGFX_Sprite(tft);
-            this->_eyelid_sp  = new LGFX_Sprite(tft);
-            this->_eye_r_sp   = new LGFX_Sprite(tft);
-            this->_eye_l_sp   = new LGFX_Sprite(tft);
-            this->_eyebrow_sp = new LGFX_Sprite(tft);
-            this->_lcd_sp     = new LGFX_Sprite(tft);
-            this->_eyelid_cl_sp = new LGFX_Sprite(tft);
-            this->_mouth_cl_sp = new LGFX_Sprite(tft);
+            this->_mouth_sp   = new M5Canvas(tft);
+            this->_eyeball_sp = new M5Canvas(tft);
+            this->_eyelid_sp  = new M5Canvas(tft);
+            this->_eye_r_sp   = new M5Canvas(tft);
+            this->_eye_l_sp   = new M5Canvas(tft);
+            this->_eyebrow_sp = new M5Canvas(tft);
+            this->_lcd_sp     = new M5Canvas(tft);
+            this->_eyelid_cl_sp = new M5Canvas(tft);
+            this->_mouth_cl_sp = new M5Canvas(tft);
             this->setExpression(expression);
             this->init(false);
         }

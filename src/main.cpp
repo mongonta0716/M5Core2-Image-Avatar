@@ -5,11 +5,10 @@
 //#define DEBUG
 // ---------------------
 
-#include <ESP32-Chimera-Core.h>
+#include <SD.h>
+#include <M5Unified.h>
 #include <Wire.h>
 
-#define LGFX_AUTODETECT
-#include <LovyanGFX.hpp>
 #include "colorpalette.h"
 #include "M5StackImageAvatar.hpp"
 
@@ -18,7 +17,6 @@
   #include "driver/dac.h"
 #endif
 #ifdef CONFIG_USE_MIC
-  #include "driver/i2s.h"
   #include "M5Core2_mic_speaker.h"
   extern bool InitI2SSpeakOrMic(int mode);
   extern float calcMouthRatio();
@@ -27,7 +25,7 @@
 #ifdef CONFIG_USE_WIFI
 #include <WiFi.h>
 #include <esp_now.h>
-#include <ESP32Servo.h>
+#include <Stackchan_servo.h>
 #include <ArduinoJson.h>
 #include "M5AvatarJson.h"
 #define BUFFER_LEN 250
@@ -46,7 +44,7 @@ uint8_t* send_data;
 
 #endif
 
-static LGFX tft;
+static M5GFX &tft = M5.Display;
 ImageAvatar *avatar;
 uint32_t looptime = 0;
 
@@ -56,7 +54,6 @@ static uint8_t expression = NORMAL;
 static bool    isTTS = false;
 static float   mouth_ratio = 0.0f;
 static float   last_mouth_ratio = 0.0f;
-static bool    eyeball_direction = RIGHT;
 static int     eyeballX = 0;
 static int     eyeballY = 0;
 
@@ -65,6 +62,7 @@ TaskHandle_t drawTaskHandle;
 TaskHandle_t blinkTaskHandle;
 TaskHandle_t breathTaskHandle;
 TaskHandle_t lipsyncTaskHandle;
+TaskHandle_t saccadeTaskHandle;
 SemaphoreHandle_t xMutex = NULL;
 
 #ifdef CONFIG_USE_WIFI
@@ -181,21 +179,6 @@ void wink(bool isRight, int count, int angle) {
   }
   vTaskResume(blinkTaskHandle);
 }
-void eyeballmove() {
-    if (eyeball_direction) {
-        eyeballX++;
-        if (eyeballX >= EYEBALL_MAX) {
-            eyeball_direction = LEFT;
-        }
-    } else {
-        eyeballX--;
-        if (eyeballX <= (EYEBALL_MAX * -1)) {
-            eyeball_direction = RIGHT;
-        }
-    }
-    avatar->setEyeBall(eyeballX, eyeballY);
-}
-
 
 // Start----- Task functions ----------
 void drawLoop(void *args) {
@@ -235,6 +218,23 @@ void blink(void *args) {
         delay(10);
     }
     vTaskDelay(300 + 10 * random(20));
+  }
+}
+
+// m5stack-avatarのfacialLoopのsaccade処理を参考にしています。
+// https://github.com/meganetaaan/m5stack-avatar/blob/master/src/Avatar.cpp
+void saccade(void *args) {
+  uint32_t saccade_interval = 1000;
+  uint32_t last_saccade_msec = 0;
+  for(;;) {
+    if ((millis() - last_saccade_msec) > saccade_interval) {
+      eyeballX = random(-EYEBALL_MAX, EYEBALL_MAX + 1);
+      eyeballY = random(-(EYEBALL_MAX / 2), EYEBALL_MAX / 2 + 1);
+      avatar->setEyeBall(eyeballX, eyeballY);
+      saccade_interval = 500 + 100 * random(20); // 500〜2400msでランダムに次の視線先へ
+      last_saccade_msec = millis();
+    }
+    vTaskDelay(33); // 約30fps
   }
 }
 
@@ -290,6 +290,13 @@ void startThreads() {
                          7,
                          &blinkTaskHandle,
                          tskNO_AFFINITY);
+    xTaskCreateUniversal(saccade,
+                         "saccade",
+                         2048,
+                         NULL,
+                         7,
+                         &saccadeTaskHandle,
+                         tskNO_AFFINITY);
     xTaskCreateUniversal(lipsync,
                          "lipsync",
                          2048,
@@ -304,14 +311,27 @@ void startThreads() {
 
 
 void setup() {
-  tft.init();
+  Serial.begin(115200);
+  delay(100);
+  Serial.println("Start");
 
-  M5.begin();
-#ifdef ARDUINO_M5STACK_Core2
-  M5.Axp.SetSpkEnable(true);
-  #ifdef CONFIG_USE_MIC
-    InitI2SSpeakOrMic(MODE_MIC); // I2Sは通常時はマイク（AquesTalk内でTTSを使うときにSPKになる。）
-  #endif
+  auto cfg = M5.config();
+  M5.begin(cfg);
+  Serial.println("M5.begin done");
+
+  // Avatar起動前の表示確認用（M5Unifiedの初期化と画面が生きているかをここで切り分ける）
+  tft.setRotation(1);
+  tft.setBrightness(200);
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextColor(TFT_WHITE);
+  tft.setTextSize(2);
+  tft.setCursor(0, 0);
+  tft.println("ImageAvatarStart");
+  Serial.println("Display draw done");
+  delay(1000);
+
+#ifdef CONFIG_USE_MIC
+  InitI2SSpeakOrMic(MODE_MIC); // I2Sは通常時はマイク（AquesTalk内でTTSを使うときにSPKになる。）
 #endif
   SD.begin(4, SPI, 20000000);
 
@@ -351,13 +371,12 @@ void loop() {
   M5.update();
 //  Serial.printf("Free Heap Size = %d\n", esp_get_free_heap_size());
 
-#ifdef CONFIG_USE_MIC
-// マイクの処理は作り直し
-#endif  
-  
   if(M5.BtnA.wasPressed()) {
 #ifdef CONFIG_USE_TTS
     isTTS = true;
+  #ifdef CONFIG_USE_MIC
+    InitI2SSpeakOrMic(MODE_SPK); // AquesTalkと同じI2Sポートを使うのでマイクを止める
+  #endif
     TTS.play("emufaibu_sutaxtu_ku koa'tsu-/tano'shiide_su.", 20);
 #endif
     swing(20, 3);
@@ -367,10 +386,12 @@ void loop() {
   if(M5.BtnB.wasPressed()) {
 #ifdef CONFIG_USE_TTS
     isTTS = true;
+  #ifdef CONFIG_USE_MIC
+    InitI2SSpeakOrMic(MODE_SPK); // AquesTalkと同じI2Sポートを使うのでマイクを止める
+  #endif
     TTS.play("konnnichiwa.", 20);
     waitTTS();
 #endif
-    eyeballmove();
   }
   if(M5.BtnC.wasPressed()) {
     // change expression
